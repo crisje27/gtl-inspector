@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8" />
+<title>Generar iconos PWA — GTL Inspector</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #F4F6FA; color: #1F2937; padding: 24px; max-width: 720px; margin: 0 auto; }
+  h1 { color: #003087; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+  .item { background: #fff; border: 1px solid #D7DEEA; border-radius: 10px; padding: 10px; text-align: center; }
+  .item canvas { max-width: 100%; border-radius: 8px; }
+  button { background: #003087; color: #fff; border: 0; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+</style>
+</head>
+<body>
+  <h1>Generar iconos PWA</h1>
+  <p>Esta página dibuja el icono SVG fuente en distintos tamaños y permite descargar los PNGs declarados en <code>manifest.json</code>. Una vez generados, copialos a <code>/icons/</code>.</p>
+  <div class="row">
+    <button id="dlAll">Descargar todos</button>
+    <button id="reload">Recargar SVG fuente</button>
+  </div>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const sizes = [
+      { name: "icon-72.png",  size: 72 },
+      { name: "icon-96.png",  size: 96 },
+      { name: "icon-128.png", size: 128 },
+      { name: "icon-144.png", size: 144 },
+      { name: "icon-152.png", size: 152 },
+      { name: "icon-192.png", size: 192 },
+      { name: "icon-256.png", size: 256 },
+      { name: "icon-384.png", size: 384 },
+      { name: "icon-512.png", size: 512 },
+      { name: "icon-512-maskable.png", size: 512, maskable: true }
+    ];
+    let svgText = null;
+
+    async function loadSvg() {
+      const r = await fetch("icon.svg?ts=" + Date.now());
+      svgText = await r.text();
+      drawAll();
+    }
+
+    function drawAll() {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+      sizes.forEach((sp) => {
+        const c = document.createElement("canvas");
+        c.width = sp.size; c.height = sp.size;
+        const ctx = c.getContext("2d");
+        const img = new Image();
+        const blob = new Blob([svgText], { type: "image/svg+xml" });
+        const url = URL.createObjectURL(blob);
+        img.onload = () => {
+          if (sp.maskable) {
+            // Padding del 10% en maskable
+            const pad = sp.size * 0.10;
+            const inner = sp.size - 2 * pad;
+            ctx.fillStyle = "#003087";
+            ctx.fillRect(0, 0, sp.size, sp.size);
+            ctx.drawImage(img, pad, pad, inner, inner);
+          } else {
+            ctx.drawImage(img, 0, 0, sp.size, sp.size);
+          }
+          URL.revokeObjectURL(url);
+        };
+        img.src = url;
+
+        const item = document.createElement("div");
+        item.className = "item";
+        item.appendChild(c);
+        const lbl = document.createElement("div");
+        lbl.style.fontSize = "12px";
+        lbl.style.marginTop = "6px";
+        lbl.textContent = sp.name;
+        item.appendChild(lbl);
+        const btn = document.createElement("button");
+        btn.textContent = "Descargar";
+        btn.style.marginTop = "6px";
+        btn.style.fontSize = "12px";
+        btn.style.padding = "4px 8px";
+        btn.onclick = () => download(c, sp.name);
+        item.appendChild(btn);
+        grid.appendChild(item);
+      });
+    }
+
+    function download(canvas, name) {
+      canvas.toBlob((b) => {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(b);
+        a.download = name;
+        a.click();
+      }, "image/png");
+    }
+
+    document.getElementById("dlAll").onclick = () => {
+      document.querySelectorAll(".item").forEach((it, i) => {
+        setTimeout(() => it.querySelector("button").click(), i * 250);
+      });
+    };
+    document.getElementById("reload").onclick = loadSvg;
+    loadSvg();
+  </script>
+</body>
+</html>

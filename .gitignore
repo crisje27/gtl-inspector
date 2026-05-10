@@ -1,0 +1,29 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores y herramientas locales
+.vscode/
+.idea/
+.claude/
+*.swp
+*.swo
+*~
+
+# Backups y temporales
+*.bak
+*.tmp
+*.log
+gtl-backup-*.json
+
+# Dependencias (por si en el futuro se usa npm)
+node_modules/
+
+# Variables de entorno (si se agregaran en el futuro)
+.env
+.env.local
+
+# Build artifacts
+dist/
+build/

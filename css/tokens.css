@@ -1,0 +1,123 @@
+/* ============================================================
+   GTL Inspector — Tokens de diseño YPF
+   ============================================================ */
+:root {
+  /* Marca YPF */
+  --ypf-blue:      #003087;
+  --ypf-blue-mid:  #0060D6;
+  --ypf-blue-dark: #001E5C;
+  --ypf-yellow:    #FFD100;
+  --ypf-yellow-soft:#FFE876;
+  --ypf-black:     #1A1A1A;
+  --ypf-white:     #FFFFFF;
+
+  /* Backgrounds */
+  --bg-app:    #F4F6FA;
+  --bg-card:   #FFFFFF;
+  --bg-elev:   #FAFBFE;
+  --bg-input:  #FFFFFF;
+  --bg-overlay:rgba(0, 30, 92, 0.55);
+
+  /* Texto */
+  --text-strong: #0F172A;
+  --text:        #1F2937;
+  --text-muted:  #5B6478;
+  --text-soft:   #8892A6;
+  --text-on-blue:#FFFFFF;
+
+  /* Bordes */
+  --border:        #D7DEEA;
+  --border-strong: #A9B3C6;
+  --divider:       #E6EAF2;
+
+  /* Semáforos */
+  --ok:        #00884A;
+  --ok-soft:   #E0F2E9;
+  --warn:      #D97706;
+  --warn-soft: #FFF1DC;
+  --danger:    #CC1F1F;
+  --danger-soft:#FBE3E3;
+  --info:      #0060D6;
+  --info-soft: #E2EBFB;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(13, 26, 60, 0.06);
+  --shadow:    0 4px 12px rgba(13, 26, 60, 0.08);
+  --shadow-lg: 0 10px 30px rgba(13, 26, 60, 0.14);
+
+  /* Radios */
+  --radius-sm: 6px;
+  --radius:    10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Tipografía */
+  --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body:    "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;
+  --fs-20: 1.25rem;
+  --fs-24: 1.5rem;
+  --fs-28: 1.75rem;
+  --fs-32: 2rem;
+  --fs-40: 2.5rem;
+
+  /* Spacing (4pt grid) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  /* Layout */
+  --maxw-content: 720px;
+  --tap-min: 48px;
+  --bottom-nav-h: 68px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Animación */
+  --ease: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --t-fast: 120ms;
+  --t-norm: 220ms;
+  --t-slow: 360ms;
+
+  /* Z-index */
+  --z-nav: 100;
+  --z-toast: 200;
+  --z-modal: 300;
+  --z-overlay: 400;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root.dark-auto {
+    --bg-app:    #0B1020;
+    --bg-card:   #131A2E;
+    --bg-elev:   #1A2440;
+    --bg-input:  #18213A;
+    --text-strong: #F1F5F9;
+    --text:        #DDE2EC;
+    --text-muted:  #94A2B8;
+    --border:      #28324C;
+    --divider:     #1E2740;
+  }
+}
+
+:root.dark {
+  --bg-app:    #0B1020;
+  --bg-card:   #131A2E;
+  --bg-elev:   #1A2440;
+  --bg-input:  #18213A;
+  --text-strong: #F1F5F9;
+  --text:        #DDE2EC;
+  --text-muted:  #94A2B8;
+  --border:      #28324C;
+  --divider:     #1E2740;
+}
