@@ -99,6 +99,8 @@
     const { pathname, params } = currentRoute();
     const view = document.getElementById("view");
     if (!view) return;
+    // Limpiar timers de la vista anterior (ej: auto-save del form)
+    if (view._autoSaveTimer) { clearInterval(view._autoSaveTimer); view._autoSaveTimer = null; }
     view.innerHTML = "";
     window.scrollTo(0, 0);
 

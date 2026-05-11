@@ -121,6 +121,9 @@
         <button class="btn btn-ghost" id="btnDraft">💾 Guardar borrador</button>
         <button class="btn btn-cta grow" id="btnEnviar">ENVIAR PARTE</button>
       </div>
+      <div class="text-center mt-2" style="min-height:18px;">
+        <span id="autoSaveLbl" class="fs-12 text-muted" style="opacity:0;transition:opacity .5s;"></span>
+      </div>
     `;
 
     bindAll(view, obra, cfg);
@@ -245,7 +248,8 @@
     };
     if (key === "pat") return {
       mediciones: (obra.locaciones || []).map(l => ({ locacion: l, ohm: "", estado: "No iniciada", obs: "" })),
-      puntuales: []
+      puntuales: [],
+      observacion: ""
     };
     if (key === "pc") return { cupros: [], wennerCount: 0, wennerUbic: "", juntasCount: 0, juntasEstado: "" };
     if (key === "elec") return { tareas: [] };
@@ -343,6 +347,10 @@
         <label>Mediciones puntuales adicionales</label>
         <div class="dynlist" id="patPuntuales"></div>
       </div>
+      <div class="field mt-3">
+        <label>Descripción de trabajos PAT del día</label>
+        <textarea class="input" id="patObservacion" rows="4" placeholder="Describí qué se hizo, avances, interferencias, observaciones generales...">${esc(d.observacion || "")}</textarea>
+      </div>
     `;
   }
 
@@ -406,11 +414,11 @@
         </div>
         <div class="field">
           <label>Cambios de programa / interferencias</label>
-          <textarea class="input" id="hoCambios">${esc(parte.handover.cambiosPrograma)}</textarea>
+          <textarea class="input" id="hoCambios" rows="4" placeholder="Describí cambios de programa, interferencias con otras cuadrillas, desvíos al plan...">${esc(parte.handover.cambiosPrograma)}</textarea>
         </div>
         <div class="field">
           <label>Comunicación con cliente / contratistas</label>
-          <textarea class="input" id="hoCom">${esc(parte.handover.comunicacion)}</textarea>
+          <textarea class="input" id="hoCom" rows="4" placeholder="Reuniones, llamados, acuerdos o directivas recibidas del cliente o contratistas...">${esc(parte.handover.comunicacion)}</textarea>
         </div>
       </div>
     `;
@@ -446,7 +454,12 @@
         <div class="field">
           <label>Fotos del día</label>
           <div class="photo-grid" id="photoGrid"></div>
-          <input type="file" id="photoInput" accept="image/*" capture="environment" multiple class="hidden" />
+          <div class="row-wrap mt-2">
+            <button type="button" class="btn btn-sm" id="btnPhotoCam">📷 Cámara</button>
+            <button type="button" class="btn btn-sm" id="btnPhotoGal">🖼 Galería</button>
+          </div>
+          <input type="file" id="photoInput" accept="image/*" multiple class="hidden" />
+          <input type="file" id="photoInputCam" accept="image/*" capture="environment" multiple class="hidden" />
           <small class="hint">Las fotos se comprimen y guardan en el parte.</small>
         </div>
       </div>
@@ -514,9 +527,24 @@
     // Submit
     view.querySelector("#btnDraft").onclick = () => {
       Store.saveDraft(parte);
-      UI.toast("Borrador guardado", "ok");
+      UI.toast("Borrador guardado ✓", "ok");
     };
     view.querySelector("#btnEnviar").onclick = () => onSubmit(view);
+
+    // Auto-guardado cada 30 segundos
+    const autoSaveTimer = setInterval(() => {
+      if (parte) {
+        Store.saveDraft(parte);
+        const lbl = view.querySelector("#autoSaveLbl");
+        if (lbl) {
+          lbl.textContent = "Auto-guardado " + new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+          lbl.style.opacity = "1";
+          setTimeout(() => { lbl.style.opacity = "0"; }, 2000);
+        }
+      }
+    }, 30000);
+    // Limpiar el timer cuando se navegue fuera del form
+    view._autoSaveTimer = autoSaveTimer;
   }
 
   function bindSegmented(container, fn) {
@@ -657,6 +685,8 @@
           });
         });
         drawPatPuntuales(view, key);
+        const patObs = block.querySelector("#patObservacion");
+        if (patObs) patObs.addEventListener("input", e => { data.observacion = e.target.value; });
       }
 
       if (key === "pc") {
@@ -886,12 +916,17 @@
   /* ---------- Fotos ---------- */
   function drawPhotos(view) {
     const grid = view.querySelector("#photoGrid");
-    const inp = view.querySelector("#photoInput");
+    const inpGal = view.querySelector("#photoInput");
+    const inpCam = view.querySelector("#photoInputCam");
+    const btnCam = view.querySelector("#btnPhotoCam");
+    const btnGal = view.querySelector("#btnPhotoGal");
+
     grid.innerHTML = parte.cierre.fotos.map((f, i) => `
       <div class="ph" style="background-image:url('${f.dataUrl}')" data-i="${i}">
         <button class="rm" type="button">✕</button>
       </div>
-    `).join("") + `<div class="ph add" id="photoAdd">＋</div>`;
+    `).join("");
+
     grid.querySelectorAll(".ph[data-i]").forEach(ph => {
       const i = +ph.dataset.i;
       ph.querySelector(".rm").onclick = (e) => {
@@ -900,17 +935,22 @@
         drawPhotos(view);
       };
     });
-    grid.querySelector("#photoAdd").onclick = () => inp.click();
-    inp.onchange = async () => {
-      for (const file of inp.files) {
+
+    async function handleFiles(files) {
+      for (const file of files) {
         try {
           const dataUrl = await compressImage(file, 1280, 0.78);
           parte.cierre.fotos.push({ name: file.name, dataUrl, addedAt: new Date().toISOString() });
         } catch (e) { UI.toast("Error con la foto: " + e.message, "warn"); }
       }
-      inp.value = "";
       drawPhotos(view);
-    };
+    }
+
+    if (btnCam) btnCam.onclick = () => inpCam.click();
+    if (btnGal) btnGal.onclick = () => inpGal.click();
+
+    inpGal.onchange = async () => { await handleFiles(inpGal.files); inpGal.value = ""; };
+    inpCam.onchange = async () => { await handleFiles(inpCam.files); inpCam.value = ""; };
   }
 
   function compressImage(file, maxSize, quality) {
