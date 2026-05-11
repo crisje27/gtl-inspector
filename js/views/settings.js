@@ -641,16 +641,24 @@
     if (!elec.tareas || !elec.tareas.length) elec.tareas = tryJsonField(parte.elec_tareas_json, []);
     const inst = Object.assign({}, (parte.avances && parte.avances.inst) || {});
     if (!inst.instrumentos || !inst.instrumentos.length) inst.instrumentos = tryJsonField(parte.inst_instrumentos_json, []);
+    const civ = Object.assign({}, (parte.avances && parte.avances.civ) || {});
+    if (!civ.tareas || !civ.tareas.length) civ.tareas = tryJsonField(parte.civ_tareas_json, []);
+    const mec = Object.assign({}, (parte.avances && parte.avances.mec) || {});
+    if (!mec.tareas || !mec.tareas.length) mec.tareas = tryJsonField(parte.mec_tareas_json, []);
+    // Observación PAT (puede venir como flat o anidada)
+    if (!pat.observacion && parte.pat_observacion) pat.observacion = parte.pat_observacion;
 
     // ¿Qué especialidades trae la obra? Esas son las que renderizamos sí o sí
     const obra = (Store.getConfig().obras || []).find(o => o.id === parte.obraId);
     const espObra = (obra && obra.especialidades) || Object.keys(parte.avances || {});
     const has = (k) => espObra.includes(k);
     const hasFOData = (fo.tendidoAcum || fo.tendidoHoy || (fo.tramos && fo.tramos.length) || fo.empalmes || fo.observacion);
-    const hasPATData = pat.mediciones && pat.mediciones.length;
+    const hasPATData = (pat.mediciones && pat.mediciones.length) || pat.observacion;
     const hasPCData = (pc.cupros && pc.cupros.length) || pc.wennerCount || pc.juntasCount;
     const hasElecData = elec.tareas && elec.tareas.length;
     const hasInstData = inst.instrumentos && inst.instrumentos.length;
+    const hasCivData  = civ.tareas && civ.tareas.length;
+    const hasMecData  = mec.tareas && mec.tareas.length;
 
     view.innerHTML = `
       <div class="row mb-3" style="flex-wrap:wrap;gap:6px;">
@@ -689,6 +697,8 @@
       ${has("pc")  ? (hasPCData  ? renderPCDetail(pc)   : emptySpecialty("⚡ Protección Catódica", "Sin cupros / Wenner / juntas cargados")) : ""}
       ${has("elec")? (hasElecData? renderTareasDetail("🔌 Eléctrico", elec.tareas) : emptySpecialty("🔌 Eléctrico", "Sin tareas cargadas")) : ""}
       ${has("inst")? (hasInstData? renderTareasDetail("🎛 Instrumentación", inst.instrumentos, true) : emptySpecialty("🎛 Instrumentación", "Sin instrumentos cargados")) : ""}
+      ${has("civ") ? (hasCivData ? renderTareasDetail("🏗 Civil", civ.tareas)        : emptySpecialty("🏗 Civil", "Sin tareas cargadas")) : ""}
+      ${has("mec") ? (hasMecData ? renderTareasDetail("⚙ Mecánico", mec.tareas)     : emptySpecialty("⚙ Mecánico", "Sin tareas cargadas")) : ""}
 
       <div class="detail-block">
         <h4>Hand Over</h4>
@@ -788,16 +798,45 @@
       },
       _editing: true
     };
+    // Helper: parsea un campo que puede venir como string JSON, array o null
+    const parseField = (v, def) => {
+      if (v == null) return def;
+      if (Array.isArray(v)) return v;
+      if (typeof v === "string") { try { return JSON.parse(v); } catch (e) { return def; } }
+      return v;
+    };
     // Reconstruir avances si vinieron flat
     if (!has("fo") && (p.fo_tendidoAcum != null || p.fo_tramos_json)) {
       out.avances.fo = foFromFlat(p);
-      try { out.avances.fo.tramos = JSON.parse(p.fo_tramos_json || "[]"); } catch(e) { out.avances.fo.tramos = []; }
+      out.avances.fo.tramos = parseField(p.fo_tramos_json, []);
     }
     if (!has("pat") && p.pat_mediciones_json) {
-      try { out.avances.pat = { mediciones: JSON.parse(p.pat_mediciones_json), puntuales: JSON.parse(p.pat_puntuales_json || "[]") }; } catch(e) {}
+      out.avances.pat = {
+        mediciones: parseField(p.pat_mediciones_json, []),
+        puntuales:  parseField(p.pat_puntuales_json, []),
+        observacion: p.pat_observacion || ""
+      };
     }
     if (!has("pc") && p.pc_cupros_json) {
-      try { out.avances.pc = { cupros: JSON.parse(p.pc_cupros_json), wennerCount: p.pc_wennerCount||0, wennerUbic: p.pc_wennerUbic||"", juntasCount: p.pc_juntasCount||0, juntasEstado: p.pc_juntasEstado||"" }; } catch(e) {}
+      out.avances.pc = {
+        cupros: parseField(p.pc_cupros_json, []),
+        wennerCount: p.pc_wennerCount || 0,
+        wennerUbic: p.pc_wennerUbic || "",
+        juntasCount: p.pc_juntasCount || 0,
+        juntasEstado: p.pc_juntasEstado || ""
+      };
+    }
+    if (!has("elec") && p.elec_tareas_json) {
+      out.avances.elec = { tareas: parseField(p.elec_tareas_json, []) };
+    }
+    if (!has("inst") && p.inst_instrumentos_json) {
+      out.avances.inst = { instrumentos: parseField(p.inst_instrumentos_json, []) };
+    }
+    if (!has("civ") && p.civ_tareas_json) {
+      out.avances.civ = { tareas: parseField(p.civ_tareas_json, []) };
+    }
+    if (!has("mec") && p.mec_tareas_json) {
+      out.avances.mec = { tareas: parseField(p.mec_tareas_json, []) };
     }
     return out;
   }
@@ -873,9 +912,10 @@
     </div>`;
   }
   function renderPATDetail(pat) {
+    const obs = pat.observacion || "";
     return `<div class="detail-block">
       <h4>⏚ Mallas PAT</h4>
-      <table class="tbl">
+      ${(pat.mediciones && pat.mediciones.length) ? `<table class="tbl">
         <thead><tr><th>Locación</th><th>Ω</th><th>Estado</th><th>Obs</th></tr></thead>
         <tbody>${(pat.mediciones || []).map(m => {
           const v = parseFloat(m.ohm);
@@ -887,7 +927,8 @@
             <td>${esc(m.obs || "")}</td>
           </tr>`;
         }).join("")}</tbody>
-      </table>
+      </table>` : ""}
+      ${obs ? `<p class="mt-3"><b>Descripción de trabajos:</b><br>${esc(obs).replace(/\n/g, "<br>")}</p>` : ""}
     </div>`;
   }
   function renderPCDetail(pc) {

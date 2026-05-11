@@ -147,7 +147,7 @@ function generateHeaders(especialidades) {
          "fo_pkInicioDia","fo_pkFinDia","fo_nivelacionHoy","fo_nivelacionAcum",
          "fo_mediaTapadaHoy","fo_mediaTapadaAcum","fo_tapadaFinalHoy","fo_tapadaFinalAcum",
          "fo_otdr","fo_bobinas","fo_empalmes","fo_tramos_json","fo_observacion"],
-    pat: ["pat_mediciones_json","pat_puntuales_json","pat_resumen"],
+    pat: ["pat_mediciones_json","pat_puntuales_json","pat_observacion","pat_resumen"],
     pc:  ["pc_cupros_json","pc_wennerCount","pc_wennerUbic","pc_juntasCount","pc_juntasEstado"],
     elec:["elec_tareas_json","elec_resumen"],
     inst:["inst_instrumentos_json","inst_resumen"],
@@ -309,6 +309,7 @@ function getParteValue(p, h) {
   if (h.indexOf("fo_") === 0) return fo[h.substring(3)] != null ? fo[h.substring(3)] : "";
   if (h === "pat_mediciones_json") return JSON.stringify(pat.mediciones || []);
   if (h === "pat_puntuales_json")  return JSON.stringify(pat.puntuales  || []);
+  if (h === "pat_observacion")     return pat.observacion || "";
   if (h === "pat_resumen")         return resumenPAT(pat);
   if (h === "pc_cupros_json")      return JSON.stringify(pc.cupros || []);
   if (h === "pc_wennerCount")      return pc.wennerCount || 0;
