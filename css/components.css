@@ -6,14 +6,17 @@
 .topbar {
   background: var(--ypf-blue);
   color: var(--text-on-blue);
-  padding: var(--sp-3) var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
   display: flex;
   align-items: center;
-  gap: var(--sp-3);
+  gap: var(--sp-2);
   position: sticky;
   top: 0;
   z-index: var(--z-nav);
   box-shadow: var(--shadow);
+}
+@media (min-width: 420px) {
+  .topbar { padding: var(--sp-3) var(--sp-4); gap: var(--sp-3); }
 }
 .topbar .brand {
   display: flex;
@@ -21,8 +24,11 @@
   gap: var(--sp-2);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: var(--fs-20);
+  font-size: var(--fs-16);
   letter-spacing: 0.02em;
+}
+@media (min-width: 420px) {
+  .topbar .brand { font-size: var(--fs-20); }
 }
 .topbar .brand .dot {
   width: 12px; height: 12px; border-radius: 50%;
@@ -83,7 +89,10 @@
   position: relative;
   transition: color var(--t-fast) var(--ease);
 }
-.bottomnav .tab .ic { font-size: 22px; line-height: 1; }
+.bottomnav .tab .ic { font-size: 20px; line-height: 1; }
+@media (min-width: 420px) {
+  .bottomnav .tab .ic { font-size: 22px; }
+}
 .bottomnav .tab.active {
   color: var(--ypf-blue);
 }
@@ -236,7 +245,13 @@
   border-color: var(--ypf-blue-mid);
   box-shadow: 0 0 0 3px rgba(0, 96, 214, 0.18);
 }
-textarea { min-height: 96px; resize: vertical; line-height: 1.5; }
+textarea {
+  min-height: 96px;
+  resize: vertical;
+  line-height: 1.5;
+  -webkit-appearance: none;
+  font-size: 16px; /* previene zoom en iOS */
+}
 select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%231F2937' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
 
 /* Inline group (number + unit, etc) */
@@ -492,6 +507,7 @@ select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg x
   display: flex;
   gap: var(--sp-2);
   align-items: center;
+  flex-wrap: wrap;
   background: var(--bg-elev);
   padding: var(--sp-2);
   border-radius: var(--radius);
@@ -613,6 +629,12 @@ select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg x
 .obra-tabs.exec .obra-tab-add { color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.3); }
 
 /* Tablas */
+.tbl-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 calc(var(--sp-3) * -1);
+  padding: 0 var(--sp-3);
+}
 .tbl {
   width: 100%;
   border-collapse: collapse;
@@ -621,19 +643,30 @@ select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg x
   border-radius: var(--radius);
   overflow: hidden;
 }
+@media (max-width: 600px) {
+  .tbl { font-size: var(--fs-12); min-width: 480px; }
+}
 .tbl th, .tbl td {
-  padding: 10px var(--sp-3);
+  padding: 8px var(--sp-2);
   text-align: left;
   border-bottom: 1px solid var(--divider);
   vertical-align: middle;
+  white-space: nowrap;
 }
+@media (min-width: 600px) {
+  .tbl th, .tbl td { padding: 10px var(--sp-3); }
+}
+.tbl td:last-child { white-space: normal; }
 .tbl th {
   background: var(--bg-elev);
   font-weight: 700;
   color: var(--text-strong);
-  font-size: var(--fs-12);
+  font-size: 10px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+@media (min-width: 600px) {
+  .tbl th { font-size: var(--fs-12); }
 }
 .tbl tbody tr:last-child td { border-bottom: 0; }
 .tbl tr.danger td { background: var(--danger-soft); }
@@ -741,18 +774,28 @@ select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg x
   position: absolute;
   top: 46px;
   left: 50%;
-  transform: translateX(-50%);
-  font-size: var(--fs-12);
+  transform: translateX(-50%) rotate(-45deg);
+  transform-origin: top center;
+  font-size: 9px;
   font-family: var(--font-mono);
   white-space: nowrap;
+  color: var(--text-muted);
+}
+@media (min-width: 600px) {
+  .pipeline .marker .lbl { font-size: var(--fs-12); transform: translateX(-50%); }
 }
 .pipeline .scale {
   display: flex;
   justify-content: space-between;
-  margin-top: var(--sp-3);
+  margin-top: var(--sp-5);
   font-family: var(--font-mono);
-  font-size: var(--fs-12);
+  font-size: 10px;
   color: var(--text-muted);
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+@media (min-width: 420px) {
+  .pipeline .scale { font-size: var(--fs-12); margin-top: var(--sp-3); }
 }
 
 /* Photo grid */

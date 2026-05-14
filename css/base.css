@@ -70,7 +70,10 @@ main.view {
   width: 100%;
   max-width: var(--maxw-content);
   margin: 0 auto;
-  padding: var(--sp-4) var(--sp-4) var(--sp-8);
+  padding: var(--sp-3) var(--sp-2) var(--sp-6);
+}
+@media (min-width: 420px) {
+  main.view { padding: var(--sp-4) var(--sp-4) var(--sp-8); }
 }
 /* Dashboard ejecutivo: ancho mayor en desktop para gerencia */
 main.view:has(.exec-header) {
