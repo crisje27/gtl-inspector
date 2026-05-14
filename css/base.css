@@ -55,7 +55,7 @@ button, input, textarea, select {
 
 button { cursor: pointer; }
 
-::selection { background: var(--ypf-yellow); color: var(--ypf-black); }
+::selection { background: var(--gtl-turquesa-soft); color: var(--ypf-black); }
 
 /* Layout root */
 #app {

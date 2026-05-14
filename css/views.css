@@ -186,10 +186,10 @@
 .specialty.fo  { border-color: var(--ypf-blue-mid); }
 .specialty.pat { border-color: var(--ok); }
 .specialty.pc  { border-color: var(--warn); }
-.specialty.elec{ border-color: var(--ypf-yellow); }
+.specialty.elec{ border-color: var(--gtl-turquesa); }
 .specialty.inst{ border-color: #6E3FB8; }
 .specialty.civ { border-color: #B8763F; }
-.specialty.mec { border-color: #3FB89D; }
+.specialty.mec { border-color: var(--gtl-turquesa-dark); }
 
 /* ---------- Dashboard ejecutivo ---------- */
 .exec-header {

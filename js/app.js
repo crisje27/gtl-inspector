@@ -575,14 +575,14 @@
     <style>
       *{margin:0;padding:0;box-sizing:border-box;}
       body{font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#111;background:#fff;padding:20px;}
-      .header{background:#003087;color:#fff;padding:12px 16px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-      .header h1{font-size:18px;letter-spacing:1px;} .header h1 span{color:#FFD100;}
+      .header{background:#0055A4;color:#fff;padding:12px 16px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+      .header h1{font-size:18px;letter-spacing:1px;} .header h1 span{color:#2ECC40;}
       .header .meta{text-align:right;font-size:11px;opacity:.9;line-height:1.6;}
-      h2{background:#0060D6;color:#fff;padding:5px 10px;margin:14px 0 6px;font-size:12px;letter-spacing:.5px;border-radius:2px;}
-      h3{color:#003087;border-bottom:1px solid #cce;padding:4px 0 2px;margin:10px 0 4px;font-size:12px;}
+      h2{background:#0078D4;color:#fff;padding:5px 10px;margin:14px 0 6px;font-size:12px;letter-spacing:.5px;border-radius:2px;}
+      h3{color:#0055A4;border-bottom:1px solid #cce;padding:4px 0 2px;margin:10px 0 4px;font-size:12px;}
       h4{font-size:11px;}
       table.tbl{width:100%;border-collapse:collapse;margin:4px 0;}
-      table.tbl th{background:#003087;color:#fff;padding:4px 6px;font-size:11px;text-align:left;}
+      table.tbl th{background:#0055A4;color:#fff;padding:4px 6px;font-size:11px;text-align:left;}
       table.tbl td{padding:4px 6px;border-bottom:1px solid #eee;vertical-align:top;}
       table.tbl tr.ok td{background:#f0fff4;} table.tbl tr.warn td{background:#fffbeb;} table.tbl tr.danger td{background:#fff0f0;}
       table.kv{width:100%;border-collapse:collapse;margin:4px 0;}

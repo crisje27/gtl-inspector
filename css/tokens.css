@@ -2,14 +2,19 @@
    GTL Inspector — Tokens de diseño YPF
    ============================================================ */
 :root {
-  /* Marca YPF */
-  --ypf-blue:      #003087;
-  --ypf-blue-mid:  #0060D6;
-  --ypf-blue-dark: #001E5C;
-  --ypf-yellow:    #FFD100;
-  --ypf-yellow-soft:#FFE876;
+  /* Marca GTL — Azul Francia · Verde Césped · Turquesa */
+  --ypf-blue:      #0055A4;    /* Azul Francia principal */
+  --ypf-blue-mid:  #0078D4;    /* Azul Francia claro */
+  --ypf-blue-dark: #003D7A;    /* Azul Francia oscuro */
+  --ypf-yellow:    #2ECC40;    /* Verde Césped (reemplaza amarillo como acento) */
+  --ypf-yellow-soft:#7EE08A;   /* Verde Césped suave */
   --ypf-black:     #1A1A1A;
   --ypf-white:     #FFFFFF;
+
+  /* Turquesa GTL */
+  --gtl-turquesa:      #00B4D8;
+  --gtl-turquesa-dark: #0096B4;
+  --gtl-turquesa-soft: #CCEEF5;
 
   /* Backgrounds */
   --bg-app:    #F4F6FA;
@@ -31,14 +36,14 @@
   --divider:       #E6EAF2;
 
   /* Semáforos */
-  --ok:        #00884A;
-  --ok-soft:   #E0F2E9;
-  --warn:      #D97706;
-  --warn-soft: #FFF1DC;
+  --ok:        #2ECC40;
+  --ok-soft:   #E0F8E4;
+  --warn:      #E5A100;
+  --warn-soft: #FFF3D6;
   --danger:    #CC1F1F;
   --danger-soft:#FBE3E3;
-  --info:      #0060D6;
-  --info-soft: #E2EBFB;
+  --info:      #00B4D8;
+  --info-soft: #E0F4FA;
 
   /* Sombras */
   --shadow-sm: 0 1px 2px rgba(13, 26, 60, 0.06);
@@ -98,26 +103,26 @@
 
 @media (prefers-color-scheme: dark) {
   :root.dark-auto {
-    --bg-app:    #0B1020;
-    --bg-card:   #131A2E;
-    --bg-elev:   #1A2440;
-    --bg-input:  #18213A;
+    --bg-app:    #081018;
+    --bg-card:   #101C2A;
+    --bg-elev:   #162636;
+    --bg-input:  #142030;
     --text-strong: #F1F5F9;
     --text:        #DDE2EC;
     --text-muted:  #94A2B8;
-    --border:      #28324C;
-    --divider:     #1E2740;
+    --border:      #243448;
+    --divider:     #1C2C3E;
   }
 }
 
 :root.dark {
-  --bg-app:    #0B1020;
-  --bg-card:   #131A2E;
-  --bg-elev:   #1A2440;
-  --bg-input:  #18213A;
+  --bg-app:    #081018;
+  --bg-card:   #101C2A;
+  --bg-elev:   #162636;
+  --bg-input:  #142030;
   --text-strong: #F1F5F9;
   --text:        #DDE2EC;
   --text-muted:  #94A2B8;
-  --border:      #28324C;
-  --divider:     #1E2740;
+  --border:      #243448;
+  --divider:     #1C2C3E;
 }

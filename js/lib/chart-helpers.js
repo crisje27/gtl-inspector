@@ -6,28 +6,30 @@
   "use strict";
 
   const COLORS = {
-    blue:    "#003087",
-    blueMid: "#0060D6",
-    blueLight: "#4D8FE8",
-    yellow:  "#FFD100",
-    ok:      "#00884A",
-    okSoft:  "#D1FAE5",
-    warn:    "#D97706",
-    warnSoft:"#FEF3C7",
+    blue:    "#0055A4",
+    blueMid: "#0078D4",
+    blueLight: "#4DA3E8",
+    yellow:  "#2ECC40",      /* Verde césped GTL */
+    turquesa: "#00B4D8",     /* Turquesa GTL */
+    ok:      "#2ECC40",
+    okSoft:  "#E0F8E4",
+    warn:    "#E5A100",
+    warnSoft:"#FFF3D6",
     danger:  "#CC1F1F",
     dangerSoft: "#FEE2E2",
     purple:  "#6E3FB8",
-    teal:    "#3FB89D",
+    teal:    "#00B4D8",      /* Turquesa GTL */
     orange:  "#B8763F",
     grey:    "#8892A6",
-    greyLight: "#CBD5E1"
+    greyLight: "#CBD5E1",
+    muted:   "#94a3b8"
   };
 
   const SPECIALTY_COLOR = {
     fo:   COLORS.blueMid,
     pat:  COLORS.ok,
     pc:   COLORS.warn,
-    elec: COLORS.yellow,
+    elec: COLORS.turquesa,
     inst: COLORS.purple,
     civ:  COLORS.orange,
     mec:  COLORS.teal
