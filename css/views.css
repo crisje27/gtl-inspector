@@ -558,6 +558,18 @@
   margin-bottom: var(--sp-3);
 }
 
+/* ---------- Dashboard: evolución por especialidad ---------- */
+.dash-evo-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-3);
+}
+@media (min-width: 720px) {
+  .dash-evo-grid { grid-template-columns: 1fr 1fr; }
+}
+.dash-evo-card .chart-body { height: 180px !important; }
+.dash-evo-card canvas { height: 180px !important; }
+
 /* ---------- Dashboard: mini-KPI blocks ---------- */
 .mini-kpi {
   background: var(--bg-surface, var(--bg-card));

@@ -91,10 +91,8 @@
 
       <!-- Evolución por especialidad -->
       <section class="dash-section">
-        <div class="dash-section-head"><h3>Evolución por especialidad</h3><span class="dash-section-sub">Acumulado en el período</span></div>
-        <div class="chart-card chart-tall">
-          <canvas id="chAvance"></canvas>
-        </div>
+        <div class="dash-section-head"><h3>Evolución por especialidad</h3><span class="dash-section-sub">Tendencia diaria en el período</span></div>
+        <div class="dash-evo-grid" id="evoGrid"></div>
       </section>
 
       <!-- Sección FO -->
@@ -484,50 +482,92 @@
    * ========================================================== */
   function drawEvolucion(view, obra, partes) {
     destroyCharts();
+    const grid = view.querySelector("#evoGrid");
+    if (!grid) return;
     const especialidades = obra.especialidades || [];
     const sorted = partes.slice().sort((a,b) => a.fecha < b.fecha ? -1 : 1);
     const labels = sorted.map(p => UI.formatDate(p.fecha).split("/").slice(0,2).join("/"));
 
-    const datasets = especialidades.map(k => {
-      const color = Charts.SPECIALTY_COLOR[k] || Charts.COLORS.blue;
-      const data = sorted.map(p => {
-        if (k === "fo") {
-          const fo = (p.avances && p.avances.fo) || foFromFlat(p);
-          return fo ? (parseFloat(fo.tendidoAcum) || 0) / 1000 : 0;
-        }
-        if (k === "pat") return patMediciones(p).filter(m => parseFloat(m.ohm) > 0 && parseFloat(m.ohm) <= 2).length;
-        if (k === "pc")  return cuprosFromParte(p).length;
-        // CIV/MEC/ELEC: AVANCE PROMEDIO (no cantidad)
-        if (k === "elec" || k === "civ" || k === "mec") {
-          const tareas = tareasFromKey(p, k);
-          if (!tareas.length) return 0;
-          return Math.round(tareas.reduce((a,t) => a + (parseFloat(t.avance) || 0), 0) / tareas.length);
-        }
-        if (k === "inst") return tareasFromKey(p, "inst", "instrumentos").length;
-        return 0;
-      });
-      const meta = Store.ESPECIALIDADES.find(e => e.key === k);
-      return { label: (meta ? meta.label : k), data, borderColor: color, backgroundColor: color + "25" };
-    }).filter(d => d.data.some(v => v > 0));
+    if (!sorted.length) {
+      grid.innerHTML = `<div class="empty"><p>Sin datos para graficar.</p></div>`;
+      return;
+    }
 
-    if (labels.length && datasets.length) {
-      currentChartInstances.push(Charts.lineChart(view.querySelector("#chAvance"), labels, datasets, {
+    // Definir qué dato extraer y cómo mostrar cada especialidad
+    const specs = {
+      fo:   { title: "🔆 Fibra Óptica",       yLabel: "Tendido diario (m)",    unit: "m",  decimals: 0, extract: p => { const fo = (p.avances && p.avances.fo) || foFromFlat(p); return parseFloat((fo && fo.tendidoHoy) || 0); } },
+      pat:  { title: "⏚ PAT",                  yLabel: "Mediciones OK",         unit: "",   decimals: 0, extract: p => patMediciones(p).filter(m => { const v = parseFloat(m.ohm); return v > 0 && v <= 2; }).length },
+      pc:   { title: "⚡ Protección Catódica",  yLabel: "Cupros verificados",    unit: "",   decimals: 0, extract: p => cuprosFromParte(p).length },
+      elec: { title: "🔌 Eléctrico",           yLabel: "Avance promedio (%)",   unit: "%",  decimals: 0, extract: p => { const t = tareasFromKey(p, "elec"); return t.length ? Math.round(t.reduce((a,x) => a + (parseFloat(x.avance) || 0), 0) / t.length) : 0; } },
+      inst: { title: "🎛 Instrumentación",      yLabel: "Instrumentos",          unit: "",   decimals: 0, extract: p => tareasFromKey(p, "inst", "instrumentos").length },
+      civ:  { title: "🏗 Civil",                yLabel: "Avance promedio (%)",   unit: "%",  decimals: 0, extract: p => { const t = tareasFromKey(p, "civ"); return t.length ? Math.round(t.reduce((a,x) => a + (parseFloat(x.avance) || 0), 0) / t.length) : 0; } },
+      mec:  { title: "⚙ Mecánico",             yLabel: "Avance promedio (%)",   unit: "%",  decimals: 0, extract: p => { const t = tareasFromKey(p, "mec"); return t.length ? Math.round(t.reduce((a,x) => a + (parseFloat(x.avance) || 0), 0) / t.length) : 0; } }
+    };
+
+    // Solo generar las que la obra tiene y tienen datos
+    const activeSpecs = especialidades.filter(k => specs[k]);
+    if (!activeSpecs.length) {
+      grid.innerHTML = `<div class="empty"><p>Sin especialidades configuradas.</p></div>`;
+      return;
+    }
+
+    let html = "";
+    activeSpecs.forEach(k => {
+      const data = sorted.map(p => specs[k].extract(p));
+      if (data.every(v => v === 0)) return; // no mostrar si todo es cero
+      html += `<div class="chart-card dash-evo-card">
+        <div class="chart-head">
+          <h4>${specs[k].title}</h4>
+          <span class="chart-sub">${specs[k].yLabel}</span>
+        </div>
+        <div class="chart-body" style="height:180px;">
+          <canvas id="chEvo_${k}"></canvas>
+        </div>
+      </div>`;
+    });
+
+    if (!html) {
+      grid.innerHTML = `<div class="empty"><p>Sin actividad registrada en el período.</p></div>`;
+      return;
+    }
+    grid.innerHTML = html;
+
+    // Crear los charts
+    activeSpecs.forEach(k => {
+      const canvas = view.querySelector("#chEvo_" + k);
+      if (!canvas) return;
+      const s = specs[k];
+      const color = Charts.SPECIALTY_COLOR[k] || Charts.COLORS.blue;
+      const data = sorted.map(p => s.extract(p));
+      if (data.every(v => v === 0)) return;
+
+      const isPct = s.unit === "%";
+      const chartOpts = {
+        scales: {
+          y: {
+            max: isPct ? 100 : undefined,
+            ticks: {
+              callback: (v) => v + (s.unit ? " " + s.unit : "")
+            }
+          }
+        },
         plugins: {
+          legend: { display: false },
           tooltip: {
             callbacks: {
-              label: (ctx) => {
-                const isFO = /Fibra/i.test(ctx.dataset.label);
-                const isPct = /Civil|Mec[aá]nico|El[eé]ctrico/i.test(ctx.dataset.label);
-                return ctx.dataset.label + ": " + Charts.fmt(ctx.parsed.y, isFO ? { unit: "km", decimals: 2 } : isPct ? { unit: "%", decimals: 0 } : { decimals: 0 });
-              }
+              label: (ctx) => s.title.replace(/^[^\s]+\s/, "") + ": " + Charts.fmt(ctx.parsed.y, { unit: s.unit, decimals: s.decimals })
             }
           }
         }
-      }));
-    } else {
-      const c = view.querySelector("#chAvance");
-      if (c && c.parentElement) c.parentElement.innerHTML = `<div class="empty"><p>Sin datos para graficar.</p></div>`;
-    }
+      };
+
+      currentChartInstances.push(Charts.barChart(canvas, labels, [{
+        label: s.yLabel,
+        data,
+        backgroundColor: color + "CC",
+        borderRadius: 4
+      }], chartOpts));
+    });
   }
 
   /* ==========================================================
