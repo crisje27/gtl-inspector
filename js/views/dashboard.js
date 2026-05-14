@@ -89,9 +89,9 @@
         </div>
       </section>
 
-      <!-- Evolución por especialidad -->
+      <!-- Resumen comparativo por especialidad -->
       <section class="dash-section">
-        <div class="dash-section-head"><h3>Evolución por especialidad</h3><span class="dash-section-sub">Tendencia diaria en el período</span></div>
+        <div class="dash-section-head"><h3>Actividad diaria por especialidad</h3><span class="dash-section-sub">Resumen compacto · detalle en cada sección</span></div>
         <div class="dash-evo-grid" id="evoGrid"></div>
       </section>
 
@@ -222,6 +222,7 @@
    *  CARGA DE DATOS
    * ========================================================== */
   async function loadAll(view) {
+    destroyCharts();
     const obra = Store.getObraActiva();
     if (!obra) return;
 
@@ -481,30 +482,48 @@
    *  EVOLUCIÓN POR ESPECIALIDAD
    * ========================================================== */
   function drawEvolucion(view, obra, partes) {
-    destroyCharts();
     const grid = view.querySelector("#evoGrid");
     if (!grid) return;
     const especialidades = obra.especialidades || [];
-    const sorted = partes.slice().sort((a,b) => a.fecha < b.fecha ? -1 : 1);
-    const labels = sorted.map(p => UI.formatDate(p.fecha).split("/").slice(0,2).join("/"));
 
-    if (!sorted.length) {
-      grid.innerHTML = `<div class="empty"><p>Sin datos para graficar.</p></div>`;
+    if (!partes.length) {
+      grid.innerHTML = `<div class="empty"><p>Sin datos en el período.</p></div>`;
       return;
     }
 
-    // Definir qué dato extraer y cómo mostrar cada especialidad
+    // Calcular resumen por especialidad: valor actual, tendencia, días activos
     const specs = {
-      fo:   { title: "🔆 Fibra Óptica",       yLabel: "Tendido diario (m)",    unit: "m",  decimals: 0, extract: p => { const fo = (p.avances && p.avances.fo) || foFromFlat(p); return parseFloat((fo && fo.tendidoHoy) || 0); } },
-      pat:  { title: "⏚ PAT",                  yLabel: "Mediciones OK",         unit: "",   decimals: 0, extract: p => patMediciones(p).filter(m => { const v = parseFloat(m.ohm); return v > 0 && v <= 2; }).length },
-      pc:   { title: "⚡ Protección Catódica",  yLabel: "Cupros verificados",    unit: "",   decimals: 0, extract: p => cuprosFromParte(p).length },
-      elec: { title: "🔌 Eléctrico",           yLabel: "Avance promedio (%)",   unit: "%",  decimals: 0, extract: p => { const t = tareasFromKey(p, "elec"); return t.length ? Math.round(t.reduce((a,x) => a + (parseFloat(x.avance) || 0), 0) / t.length) : 0; } },
-      inst: { title: "🎛 Instrumentación",      yLabel: "Instrumentos",          unit: "",   decimals: 0, extract: p => tareasFromKey(p, "inst", "instrumentos").length },
-      civ:  { title: "🏗 Civil",                yLabel: "Avance promedio (%)",   unit: "%",  decimals: 0, extract: p => { const t = tareasFromKey(p, "civ"); return t.length ? Math.round(t.reduce((a,x) => a + (parseFloat(x.avance) || 0), 0) / t.length) : 0; } },
-      mec:  { title: "⚙ Mecánico",             yLabel: "Avance promedio (%)",   unit: "%",  decimals: 0, extract: p => { const t = tareasFromKey(p, "mec"); return t.length ? Math.round(t.reduce((a,x) => a + (parseFloat(x.avance) || 0), 0) / t.length) : 0; } }
+      fo:   { icon: "🔆", title: "Fibra Óptica",       calc: () => {
+        let maxAcum = 0, empT = 0, dias = 0;
+        partes.forEach(p => { const fo = (p.avances && p.avances.fo) || foFromFlat(p); if (fo) { maxAcum = Math.max(maxAcum, parseFloat(fo.tendidoAcum) || 0); empT += parseInt(fo.empalmes, 10) || 0; if (parseFloat(fo.tendidoHoy) > 0) dias++; } });
+        return { valor: (maxAcum / 1000).toFixed(2) + " km", sub: `${empT} empalmes · ${dias} día${dias===1?"":"s"} activo${dias===1?"":"s"}`, pct: -1 };
+      }},
+      pat:  { icon: "⏚", title: "PAT Mallas",          calc: () => {
+        const locObra = (obra.locaciones || []).length;
+        const best = {};
+        partes.forEach(p => patMediciones(p).forEach(m => { const v = parseFloat(m.ohm); if (!isNaN(v) && v > 0 && (!best[m.locacion] || v < best[m.locacion])) best[m.locacion] = v; }));
+        const lib = Object.values(best).filter(v => v <= 2).length;
+        const pct = locObra > 0 ? Math.round((lib / locObra) * 100) : 0;
+        return { valor: lib + " / " + locObra, sub: `locaciones liberadas (≤ 2Ω)`, pct };
+      }},
+      pc:   { icon: "⚡", title: "Protección Catódica", calc: () => {
+        let total = 0, fail = 0;
+        partes.forEach(p => cuprosFromParte(p).forEach(c => { total++; if ((c.martillo+"").toUpperCase() === "FAIL") fail++; }));
+        const pct = total ? Math.round(((total - fail) / total) * 100) : 0;
+        return { valor: total + " cupros", sub: `${fail} FAIL · ${total ? (100 - pct) : 0}% falla`, pct };
+      }},
+      elec: { icon: "🔌", title: "Eléctrico",          calc: () => calcTareasResumen(partes, "elec") },
+      inst: { icon: "🎛", title: "Instrumentación",     calc: () => {
+        let total = 0;
+        const estados = {};
+        partes.forEach(p => tareasFromKey(p, "inst", "instrumentos").forEach(i => { total++; estados[i.estado || "—"] = (estados[i.estado || "—"] || 0) + 1; }));
+        const topEstado = Object.entries(estados).sort((a,b) => b[1] - a[1])[0];
+        return { valor: total + " instrumentos", sub: topEstado ? `mayoría: ${topEstado[0]} (${topEstado[1]})` : "sin datos", pct: -1 };
+      }},
+      civ:  { icon: "🏗", title: "Civil",               calc: () => calcTareasResumen(partes, "civ") },
+      mec:  { icon: "⚙", title: "Mecánico",            calc: () => calcTareasResumen(partes, "mec") }
     };
 
-    // Solo generar las que la obra tiene y tienen datos
     const activeSpecs = especialidades.filter(k => specs[k]);
     if (!activeSpecs.length) {
       grid.innerHTML = `<div class="empty"><p>Sin especialidades configuradas.</p></div>`;
@@ -513,61 +532,31 @@
 
     let html = "";
     activeSpecs.forEach(k => {
-      const data = sorted.map(p => specs[k].extract(p));
-      if (data.every(v => v === 0)) return; // no mostrar si todo es cero
-      html += `<div class="chart-card dash-evo-card">
-        <div class="chart-head">
-          <h4>${specs[k].title}</h4>
-          <span class="chart-sub">${specs[k].yLabel}</span>
-        </div>
-        <div class="chart-body" style="height:180px;">
-          <canvas id="chEvo_${k}"></canvas>
+      const s = specs[k];
+      const r = s.calc();
+      const color = Charts.SPECIALTY_COLOR[k] || Charts.COLORS.blue;
+      const colorBar = r.pct >= 80 ? "var(--ok)" : r.pct >= 50 ? "var(--warn)" : r.pct >= 0 ? "var(--danger)" : color;
+      html += `<div class="dash-evo-summary" style="border-left:4px solid ${color};">
+        <div class="dash-evo-icon">${s.icon}</div>
+        <div class="dash-evo-info">
+          <div class="dash-evo-title">${s.title}</div>
+          <div class="dash-evo-valor">${r.valor}</div>
+          <div class="dash-evo-sub">${r.sub}</div>
+          ${r.pct >= 0 ? `<div class="kpi-bar" style="margin-top:6px;background:var(--border);"><div class="kpi-bar-fill" style="width:${r.pct}%;background:${colorBar};"></div></div>` : ""}
         </div>
       </div>`;
     });
 
-    if (!html) {
-      grid.innerHTML = `<div class="empty"><p>Sin actividad registrada en el período.</p></div>`;
-      return;
-    }
     grid.innerHTML = html;
+  }
 
-    // Crear los charts
-    activeSpecs.forEach(k => {
-      const canvas = view.querySelector("#chEvo_" + k);
-      if (!canvas) return;
-      const s = specs[k];
-      const color = Charts.SPECIALTY_COLOR[k] || Charts.COLORS.blue;
-      const data = sorted.map(p => s.extract(p));
-      if (data.every(v => v === 0)) return;
-
-      const isPct = s.unit === "%";
-      const chartOpts = {
-        scales: {
-          y: {
-            max: isPct ? 100 : undefined,
-            ticks: {
-              callback: (v) => v + (s.unit ? " " + s.unit : "")
-            }
-          }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => s.title.replace(/^[^\s]+\s/, "") + ": " + Charts.fmt(ctx.parsed.y, { unit: s.unit, decimals: s.decimals })
-            }
-          }
-        }
-      };
-
-      currentChartInstances.push(Charts.barChart(canvas, labels, [{
-        label: s.yLabel,
-        data,
-        backgroundColor: color + "CC",
-        borderRadius: 4
-      }], chartOpts));
-    });
+  function calcTareasResumen(partes, key) {
+    const avances = [];
+    partes.forEach(p => tareasFromKey(p, key).forEach(t => { const a = parseFloat(t.avance); if (!isNaN(a)) avances.push(a); }));
+    if (!avances.length) return { valor: "0 tareas", sub: "sin actividad", pct: -1 };
+    const avg = Math.round(avances.reduce((a,b)=>a+b,0) / avances.length);
+    const done = avances.filter(v => v >= 100).length;
+    return { valor: avg + "% promedio", sub: `${avances.length} tareas · ${done} completada${done===1?"":"s"}`, pct: avg };
   }
 
   /* ==========================================================
@@ -629,14 +618,16 @@
       ${tramosAcum.length ? `<div class="chart-card mt-3">
         <div class="chart-head"><h4>Tramos de tendido registrados</h4><span class="chart-sub">${tramosAcum.length} tramo${tramosAcum.length === 1 ? "" : "s"} en el período</span></div>
         <table class="tbl">
-          <thead><tr><th>Fecha</th><th>PK inicio</th><th>PK fin</th><th>Long. (m)</th><th>Obs</th></tr></thead>
+          <thead><tr><th>Fecha</th><th>Desde</th><th>Hasta</th><th>Actividad</th><th>Metros</th><th>Estado</th><th>Obs</th></tr></thead>
           <tbody>${tramosAcum.slice(0, 30).map(t => {
-            const ini = parseFloat(t.pkInicio) || 0, fin = parseFloat(t.pkFin) || 0;
+            const estCls = t.estado === "OK" ? "ok" : t.estado === "Parcial" ? "warn" : "";
             return `<tr>
               <td class="mono">${UI.formatDate(t.fecha)}</td>
-              <td class="mono">${UI.formatPK(ini)}</td>
-              <td class="mono">${UI.formatPK(fin)}</td>
-              <td class="mono">${fin - ini}</td>
+              <td>Cám ${esc(t.camDesde || "—")}</td>
+              <td>${(t.camHasta === "Receptora") ? "<b>Receptora</b>" : "Cám " + esc(t.camHasta || "—")}</td>
+              <td>${esc(t.actividad || "—")}</td>
+              <td class="mono">${t.metros ? esc(t.metros) + " m" : "—"}</td>
+              <td><span class="badge ${estCls}">${esc(t.estado || "—")}</span></td>
               <td class="text-muted">${esc(t.obs || "—")}</td>
             </tr>`;
           }).join("")}</tbody>
