@@ -424,6 +424,11 @@
     if (!elec.tareas || !elec.tareas.length) elec.tareas = tryJson(p.elec_tareas_json, []);
     let inst = Object.assign({}, (p.avances && p.avances.inst) || {});
     if (!inst.instrumentos || !inst.instrumentos.length) inst.instrumentos = tryJson(p.inst_instrumentos_json, []);
+    let civ = Object.assign({}, (p.avances && p.avances.civ) || {});
+    if (!civ.tareas || !civ.tareas.length) civ.tareas = tryJson(p.civ_tareas_json, []);
+    let mec = Object.assign({}, (p.avances && p.avances.mec) || {});
+    if (!mec.tareas || !mec.tareas.length) mec.tareas = tryJson(p.mec_tareas_json, []);
+    if (!pat.observacion && p.pat_observacion) pat.observacion = p.pat_observacion;
     const ho  = p.handover || {
       pendientes: tryJson(p.pendientes, []),
       noConformidades: tryJson(p.noConformidades, []),
@@ -450,7 +455,9 @@
      ["pat", pat.mediciones.length || pat.puntuales.length],
      ["pc", pc.cupros.length || pc.wennerCount || pc.juntasCount],
      ["elec", elec.tareas.length],
-     ["inst", inst.instrumentos.length]].forEach(([k, v]) => {
+     ["inst", inst.instrumentos.length],
+     ["civ", civ.tareas.length],
+     ["mec", mec.tareas.length]].forEach(([k, v]) => {
       if (v && !especialidades.includes(k)) especialidades.push(k);
     });
     const has = (k) => especialidades.includes(k);
@@ -509,7 +516,10 @@
       ${tramosHtml}` : "";
 
     const patSection = has("pat") ? `
-      <h3>⏚ Mallas PAT</h3>${patHtml || "<p class='none'>Sin mediciones</p>"}` : "";
+      <h3>⏚ Mallas PAT</h3>${patHtml || "<p class='none'>Sin mediciones</p>"}
+      ${pat.puntuales && pat.puntuales.length ? `<p style="margin:4px 0;font-size:11px;"><b>Mediciones puntuales:</b> ${pat.puntuales.length} registrada(s)</p>` : ""}
+      ${pat.observacion ? `<p style="margin:4px 0;font-size:11px;"><b>Observación inspector:</b> ${esc(pat.observacion)}</p>` : ""}
+      ${pat.resumen ? `<p style="margin:4px 0;font-size:11px;"><b>Resumen:</b> ${esc(pat.resumen)}</p>` : ""}` : "";
 
     const pcSection = has("pc") ? `
       <h3>⚡ Protección Catódica</h3>
@@ -525,7 +535,40 @@
       <h3>🔌 Eléctrico</h3>${tareasHtml(elec.tareas) || "<p class='none'>Sin tareas</p>"}` : "";
 
     const instSection = has("inst") ? `
-      <h3>🎛 Instrumentación</h3>${tareasHtml(inst.instrumentos) || "<p class='none'>Sin instrumentos</p>"}` : "";
+      <h3>🎛 Instrumentación</h3>
+      ${inst.instrumentos && inst.instrumentos.length ? `
+        <table class="tbl"><thead><tr><th>TAG</th><th>Descripción</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
+          ${inst.instrumentos.map(t => `<tr>
+            <td><b>${esc(t.tag || "")}</b></td>
+            <td>${esc(t.desc || "")}</td>
+            <td>${esc(t.estado || "")}</td>
+            <td>${esc(t.obs || "")}</td>
+          </tr>`).join("")}
+        </tbody></table>` : "<p class='none'>Sin instrumentos</p>"}` : "";
+
+    const civSection = has("civ") ? `
+      <h3>🏗 Civil</h3>
+      ${civ.tareas && civ.tareas.length ? `
+        <table class="tbl"><thead><tr><th>Tarea</th><th>Tipo</th><th>Avance</th><th>Obs</th></tr></thead><tbody>
+          ${civ.tareas.map(t => `<tr>
+            <td>${esc(t.desc || "")}</td>
+            <td>${esc(t.tipo || "")}</td>
+            <td>${t.avance != null ? t.avance + "%" : "—"}</td>
+            <td>${esc(t.obs || "")}</td>
+          </tr>`).join("")}
+        </tbody></table>` : "<p class='none'>Sin tareas civiles</p>"}` : "";
+
+    const mecSection = has("mec") ? `
+      <h3>⚙ Mecánico</h3>
+      ${mec.tareas && mec.tareas.length ? `
+        <table class="tbl"><thead><tr><th>Tarea</th><th>Tipo</th><th>Avance</th><th>Obs</th></tr></thead><tbody>
+          ${mec.tareas.map(t => `<tr>
+            <td>${esc(t.desc || "")}</td>
+            <td>${esc(t.tipo || "")}</td>
+            <td>${t.avance != null ? t.avance + "%" : "—"}</td>
+            <td>${esc(t.obs || "")}</td>
+          </tr>`).join("")}
+        </tbody></table>` : "<p class='none'>Sin tareas mecánicas</p>"}` : "";
 
     const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
     <title>Parte Diario — ${esc(p.obraNombre)} ${fd}</title>
@@ -584,7 +627,7 @@
     </table>
 
     <h2>3. AVANCES</h2>
-    ${(foSection + patSection + pcSection + elecSection + instSection) || "<p class='none'>Sin especialidades cargadas para esta obra.</p>"}
+    ${(foSection + patSection + pcSection + elecSection + instSection + civSection + mecSection) || "<p class='none'>Sin especialidades cargadas para esta obra.</p>"}
 
     <h2>4. HAND OVER</h2>
     <table class="kv">
