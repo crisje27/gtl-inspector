@@ -557,3 +557,109 @@
   padding-bottom: 8px;
   margin-bottom: var(--sp-3);
 }
+
+/* ---------- Dashboard: mini-KPI blocks ---------- */
+.mini-kpi {
+  background: var(--bg-surface, var(--bg-card));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--sp-2) var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mini-kpi .lbl {
+  font-size: var(--fs-11, 11px);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.mini-kpi b {
+  font-family: var(--font-display);
+  font-size: var(--fs-20);
+  font-weight: 700;
+  color: var(--text-strong);
+  line-height: 1.15;
+}
+
+/* ---------- Dashboard: observation / note cards ---------- */
+.dash-note {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--ypf-blue);
+  border-radius: var(--radius);
+  padding: var(--sp-2) var(--sp-3);
+  margin-bottom: var(--sp-2);
+}
+.dash-note-date {
+  font-size: var(--fs-11, 11px);
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.dash-note-text {
+  font-size: var(--fs-14);
+  color: var(--text);
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+/* ---------- Dashboard: styled list (charlas, empresas) ---------- */
+.dash-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.dash-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--divider);
+  font-size: var(--fs-14);
+  color: var(--text);
+}
+.dash-list li:last-child {
+  border-bottom: none;
+}
+.dash-list li .badge {
+  flex-shrink: 0;
+}
+
+/* ---------- Dashboard: photo gallery ---------- */
+.dash-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--sp-2);
+}
+@media (min-width: 600px) {
+  .dash-gallery { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+}
+.dash-photo {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--border);
+  cursor: pointer;
+}
+.dash-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.dash-photo-date {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: var(--fs-11, 11px);
+  font-family: var(--font-mono);
+  padding: 2px 6px;
+  text-align: center;
+}
