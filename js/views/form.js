@@ -576,16 +576,29 @@
   function drawPendientes(view) {
     const list = view.querySelector("#pendList");
     const arr = parte.handover.pendientes;
-    list.innerHTML = arr.map((p, i) => `
-      <div class="row-item" data-i="${i}" style="flex-wrap:wrap;">
-        <input class="input grow" data-f="desc" value="${esc(p.desc)}" placeholder="Descripción" />
-        <input class="input fs-14" data-f="resp" value="${esc(p.responsable)}" placeholder="Responsable" style="max-width:140px;" />
-        <select class="input fs-14" data-f="crit" style="max-width:110px;">
-          ${Store.CRITICIDADES.map(c => `<option ${c === p.criticidad ? "selected":""}>${c}</option>`).join("")}
-        </select>
-        <button class="btn-rm" type="button">✕</button>
-      </div>`).join("") + `<button class="btn-add" type="button">＋ Agregar pendiente</button>`;
-    list.querySelectorAll(".row-item").forEach(row => {
+    // Migrar pendientes antiguos sin campo estado
+    arr.forEach(p => { if (!p.estado) p.estado = "Abierto"; });
+    const ESTADOS = ["Abierto", "Cerrado"];
+    list.innerHTML = arr.map((p, i) => {
+      const cerrado = p.estado === "Cerrado";
+      return `
+      <div class="row-item pend-item ${cerrado ? "pend-cerrado" : ""}" data-i="${i}">
+        <div class="pend-row-top">
+          <input class="input grow" data-f="desc" value="${esc(p.desc)}" placeholder="Descripción" ${cerrado ? 'style="text-decoration:line-through;opacity:.55;"' : ""} />
+          <button class="btn-rm" type="button">✕</button>
+        </div>
+        <div class="pend-row-bottom">
+          <input class="input fs-14" data-f="resp" value="${esc(p.responsable)}" placeholder="Responsable" style="flex:1;min-width:100px;max-width:140px;" />
+          <select class="input fs-14" data-f="crit" style="flex:0 0 auto;min-width:90px;max-width:110px;">
+            ${Store.CRITICIDADES.map(c => `<option ${c === p.criticidad ? "selected":""}>${c}</option>`).join("")}
+          </select>
+          <button type="button" class="btn-estado ${cerrado ? "btn-estado-cerrado" : "btn-estado-abierto"}" data-f="toggle">
+            ${cerrado ? "✓ Cerrado" : "◯ Abierto"}
+          </button>
+        </div>
+      </div>`;
+    }).join("") + `<button class="btn-add" type="button">＋ Agregar pendiente</button>`;
+    list.querySelectorAll(".pend-item").forEach(row => {
       const i = +row.dataset.i;
       row.querySelectorAll("input,select").forEach(el => {
         const evt = el.tagName === "SELECT" ? "change" : "input";
@@ -597,9 +610,13 @@
         });
       });
       row.querySelector(".btn-rm").onclick = () => { arr.splice(i, 1); drawPendientes(view); };
+      row.querySelector("[data-f='toggle']").onclick = () => {
+        arr[i].estado = arr[i].estado === "Cerrado" ? "Abierto" : "Cerrado";
+        drawPendientes(view);
+      };
     });
     list.querySelector(".btn-add").onclick = () => {
-      arr.push({ desc: "", responsable: "", criticidad: "Medio" });
+      arr.push({ desc: "", responsable: "", criticidad: "Medio", estado: "Abierto" });
       drawPendientes(view);
     };
   }

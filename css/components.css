@@ -357,12 +357,16 @@ select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg x
   flex: 1;
   background: transparent;
   border: 0;
-  padding: 10px var(--sp-3);
+  padding: 8px 6px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: var(--fs-14);
+  font-size: var(--fs-12);
   color: var(--text-muted);
   min-height: 40px;
+  white-space: nowrap;
+}
+@media (min-width: 420px) {
+  .segmented button { padding: 10px var(--sp-3); font-size: var(--fs-14); }
 }
 .segmented button.active {
   background: var(--ypf-blue);
@@ -545,6 +549,52 @@ select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg x
   gap: var(--sp-2);
 }
 .dynlist .btn-add:hover { background: var(--info-soft); }
+
+/* Pendientes: rows con toggle estado */
+.pend-item {
+  flex-direction: column !important;
+  gap: var(--sp-2) !important;
+}
+.pend-row-top {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+  width: 100%;
+}
+.pend-row-bottom {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.pend-cerrado {
+  background: var(--ok-soft) !important;
+  border-color: var(--ok) !important;
+  opacity: 0.75;
+}
+.btn-estado {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  font-size: var(--fs-12);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 36px;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+  flex-shrink: 0;
+}
+.btn-estado-abierto {
+  background: var(--warn-soft);
+  color: var(--warn);
+  border-color: var(--warn);
+}
+.btn-estado-cerrado {
+  background: var(--ok);
+  color: #fff;
+  border-color: var(--ok);
+}
 
 /* Obra tabs (cambio rápido entre obras) */
 .obra-tabs {
@@ -859,6 +909,30 @@ select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg x
 }
 .kv dt { color: var(--text-muted); font-weight: 500; }
 .kv dd { margin: 0; color: var(--text-strong); font-weight: 600; }
+
+/* ---------- Mobile optimizations ---------- */
+@media (max-width: 420px) {
+  /* Dynlist inputs: full width on very small screens */
+  .dynlist .row-item .input.grow { min-width: 0; flex-basis: 100%; }
+  /* Submit bar: tighter on mobile */
+  .submit-bar { padding: var(--sp-2); margin: 0 calc(var(--sp-2) * -1); }
+  .submit-bar .btn { font-size: var(--fs-14); padding: 8px 12px; }
+  /* Cards: less padding on mobile */
+  .card { padding: var(--sp-3); }
+  .card .card-title { font-size: var(--fs-16); gap: var(--sp-1); margin-bottom: var(--sp-2); }
+  .card .card-title .num { width: 22px; height: 22px; font-size: var(--fs-12); }
+  /* Field labels: more compact */
+  .field > label { font-size: var(--fs-12); }
+  /* Check/toggle: smaller tap targets on compact layouts */
+  .check { padding: 8px var(--sp-2); font-size: var(--fs-14); }
+  /* Bigtoggle: smaller */
+  .bigtoggle button { padding: 10px; font-size: var(--fs-14); }
+  /* KV detail: stack on mobile */
+  .kv { grid-template-columns: 1fr; gap: 2px var(--sp-2); }
+  .kv dt { font-size: var(--fs-12); }
+  /* Input-group addon smaller */
+  .input-group .addon { padding: 0 var(--sp-2); font-size: var(--fs-12); }
+}
 
 /* Print only */
 @media print {

@@ -1093,19 +1093,30 @@
     if (!box) return;
     const all = [];
     partes.forEach(p => parsePendientes(p).forEach(x => {
-      if (/Cr[ií]tico|Alto/.test(x.criticidad || "")) all.push({ ...x, fecha: p.fecha });
+      all.push({ ...x, fecha: p.fecha });
     }));
-    if (!all.length) { box.innerHTML = `<div class="empty"><p>✓ Sin pendientes urgentes.</p></div>`; return; }
+    const abiertos = all.filter(x => (x.estado || "Abierto") !== "Cerrado");
+    const cerrados = all.filter(x => x.estado === "Cerrado");
+    const urgentes = abiertos.filter(x => /Cr[ií]tico|Alto/.test(x.criticidad || ""));
+    if (!all.length) { box.innerHTML = `<div class="empty"><p>✓ Sin pendientes registrados.</p></div>`; return; }
     box.style.height = "auto";
-    box.innerHTML = `<table class="tbl">
-      <thead><tr><th>Fecha</th><th>Descripción</th><th>Resp.</th><th>Crit.</th></tr></thead>
-      <tbody>${all.slice(0, 20).map(x => `<tr>
+    box.style.padding = "var(--sp-3)";
+    const resumen = `<div class="row-wrap mb-3" style="gap:var(--sp-2);">
+      <span class="chip warn">🔴 ${urgentes.length} urgente${urgentes.length === 1 ? "" : "s"}</span>
+      <span class="chip info">📋 ${abiertos.length} abierto${abiertos.length === 1 ? "" : "s"}</span>
+      <span class="chip ok">✓ ${cerrados.length} cerrado${cerrados.length === 1 ? "" : "s"}</span>
+    </div>`;
+    const showList = urgentes.length ? urgentes : abiertos;
+    box.innerHTML = resumen + (showList.length ? `<table class="tbl">
+      <thead><tr><th>Fecha</th><th>Descripción</th><th>Resp.</th><th>Crit.</th><th>Estado</th></tr></thead>
+      <tbody>${showList.slice(0, 20).map(x => `<tr>
         <td class="mono">${UI.formatDate(x.fecha)}</td>
         <td>${esc(x.desc || "")}</td>
         <td>${esc(x.responsable || "—")}</td>
         <td><span class="badge ${/Cr[ií]tico/.test(x.criticidad) ? "danger" : "warn"}">${esc(x.criticidad || "")}</span></td>
+        <td><span class="badge ${(x.estado || "Abierto") === "Cerrado" ? "ok" : "muted"}">${esc(x.estado || "Abierto")}</span></td>
       </tr>`).join("")}</tbody>
-    </table>`;
+    </table>` : `<p class="text-muted fs-14">Sin pendientes urgentes abiertos.</p>`);
   }
 
   function drawNCs(view, partes) {

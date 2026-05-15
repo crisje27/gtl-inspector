@@ -469,7 +469,17 @@
 
     const row = (k, v) => v != null && v !== "" ? `<tr><td class="k">${k}</td><td>${v}</td></tr>` : "";
     const badge = (v, ok) => `<span class="badge ${ok ? "ok":"danger"}">${v}</span>`;
-    const nl2li = arr => arr && arr.length ? `<ul>${arr.map(x => `<li>${esc(typeof x === "string" ? x : (x.texto || x.desc || JSON.stringify(x)))}</li>`).join("")}</ul>` : "—";
+    const nl2li = arr => {
+      if (!arr || !arr.length) return "—";
+      return `<ul>${arr.map(x => {
+        if (typeof x === "string") return `<li>${esc(x)}</li>`;
+        const desc = esc(x.texto || x.desc || JSON.stringify(x));
+        const estado = x.estado === "Cerrado" ? ' <span class="badge ok">Cerrado</span>' : "";
+        const crit = x.criticidad ? ` <span class="badge ${/Cr[ií]tico/.test(x.criticidad) ? "danger" : /Alto/.test(x.criticidad) ? "warn" : "muted"}">${esc(x.criticidad)}</span>` : "";
+        const resp = x.responsable ? ` — ${esc(x.responsable)}` : "";
+        return `<li>${desc}${resp}${crit}${estado}</li>`;
+      }).join("")}</ul>`;
+    };
 
     const tramosHtml = (fo.tramos && fo.tramos.length)
       ? `<table class="tbl"><thead><tr><th>Desde</th><th>Hasta</th><th>Actividad</th><th>Metros</th><th>Estado</th><th>Obs</th></tr></thead><tbody>

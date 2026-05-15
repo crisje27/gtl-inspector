@@ -59,10 +59,13 @@
   background: linear-gradient(135deg, var(--ypf-blue) 0%, var(--ypf-blue-mid) 100%);
   color: #fff;
   border-radius: var(--radius-lg);
-  padding: var(--sp-5);
-  margin-bottom: var(--sp-4);
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-3);
   position: relative;
   overflow: hidden;
+}
+@media (min-width: 420px) {
+  .home-hero { padding: var(--sp-5); margin-bottom: var(--sp-4); }
 }
 .home-hero::after {
   content: "";
@@ -73,7 +76,8 @@
   border-radius: 50%;
   opacity: 0.18;
 }
-.home-hero h2 { color: #fff; font-size: var(--fs-28); margin-bottom: 4px; }
+.home-hero h2 { color: #fff; font-size: var(--fs-24); margin-bottom: 4px; }
+@media (min-width: 420px) { .home-hero h2 { font-size: var(--fs-28); } }
 .home-hero .obra-tag {
   display: inline-flex;
   align-items: center;
@@ -120,7 +124,8 @@
 }
 .home-quick .qcard .ic { font-size: 22px; }
 .home-quick .qcard .lbl { font-size: var(--fs-12); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
-.home-quick .qcard .val { font-family: var(--font-display); font-size: var(--fs-24); font-weight: 700; color: var(--text-strong); }
+.home-quick .qcard .val { font-family: var(--font-display); font-size: var(--fs-20); font-weight: 700; color: var(--text-strong); }
+@media (min-width: 420px) { .home-quick .qcard .val { font-size: var(--fs-24); } }
 
 /* ---------- Form view ---------- */
 .form-header {
@@ -180,8 +185,18 @@
 
 .specialty {
   border-left: 4px solid var(--ypf-blue);
-  padding-left: var(--sp-3);
+  padding-left: var(--sp-2);
   margin-bottom: var(--sp-3);
+}
+@media (min-width: 420px) {
+  .specialty { padding-left: var(--sp-3); }
+}
+.specialty h4 {
+  font-size: var(--fs-16);
+  margin-bottom: var(--sp-2);
+}
+@media (min-width: 420px) {
+  .specialty h4 { font-size: var(--fs-18); }
 }
 .specialty.fo  { border-color: var(--ypf-blue-mid); }
 .specialty.pat { border-color: var(--ok); }
@@ -599,11 +614,14 @@
 .history-item .date {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: var(--fs-20);
+  font-size: var(--fs-18);
   color: var(--ypf-blue);
-  min-width: 56px;
+  min-width: 48px;
   text-align: center;
   line-height: 1.05;
+}
+@media (min-width: 420px) {
+  .history-item .date { font-size: var(--fs-20); min-width: 56px; }
 }
 .history-item .date small { display: block; font-size: var(--fs-12); color: var(--text-muted); font-family: var(--font-body); font-weight: 500; }
 .history-item .info { flex: 1; }
