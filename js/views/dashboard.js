@@ -240,6 +240,17 @@
       UI.toast("Sin conexión backend — datos locales", "warn", 2200);
     }
 
+    // Deduplicar por id
+    {
+      const seen = new Set();
+      partes = partes.filter(p => {
+        const key = p.id || (p.fecha + "_" + p.turno + "_" + (p.inspectorDni || p.inspectorNombre));
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
     // Normalizar fecha
     partes.forEach(p => {
       if (p.fecha) {

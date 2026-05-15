@@ -253,9 +253,27 @@ function addParte(parte) {
 
   if (!parte.id) parte.id = "parte_" + Date.now() + "_" + Math.floor(Math.random() * 1e6);
 
+  // Deduplicación: si ya existe un parte con el mismo id, actualizamos en lugar de duplicar
+  var idCol = headers.indexOf("id") + 1;
+  var existingRow = -1;
+  if (idCol > 0 && sh.getLastRow() > 1) {
+    var ids = sh.getRange(2, idCol, sh.getLastRow() - 1, 1).getValues();
+    for (var r = 0; r < ids.length; r++) {
+      if (ids[r][0] === parte.id) { existingRow = r + 2; break; }
+    }
+  }
+
   var row = headers.map(function (h) { return getParteValue(parte, h); });
-  sh.appendRow(row);
-  var rowNum = sh.getLastRow();
+  var rowNum;
+  if (existingRow > 0) {
+    // Actualizar fila existente en lugar de duplicar
+    sh.getRange(existingRow, 1, 1, row.length).setValues([row]);
+    rowNum = existingRow;
+    log("INFO addParte", "UPDATE (dedup) Obra=" + parte.obraId + " id=" + parte.id + " row=" + rowNum);
+  } else {
+    sh.appendRow(row);
+    rowNum = sh.getLastRow();
+  }
 
   // Aplicar resaltado por alerta
   applyHighlights(sh, rowNum, headers, parte);

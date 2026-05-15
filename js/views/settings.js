@@ -503,6 +503,15 @@
         partes = partes.filter(p => ids.has(p.id));
       }
 
+      // Deduplicar por id (puede haber duplicados en backend o al combinar fuentes)
+      const seen = new Set();
+      partes = partes.filter(p => {
+        const key = p.id || (p.fecha + "_" + p.turno + "_" + (p.inspectorDni || p.inspectorNombre));
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+
       partes.sort((a, b) => a.fecha < b.fecha ? 1 : -1);
 
       if (!partes.length) {
