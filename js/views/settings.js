@@ -487,14 +487,27 @@
       const obraId = currentObra ? currentObra.id : obra.id;
 
       try {
-        if (mode !== "local") {
-          partes = await Sync.fetchPartes(obraId, dFrom, dTo);
-        } else {
+        if (mode === "local") {
           partes = await Store.listPartesLocal(obraId);
+        } else {
+          // Traer del backend + combinar con locales pendientes para no perder datos
+          let remote = [];
+          try {
+            remote = await Sync.fetchPartes(obraId, dFrom, dTo);
+          } catch (e) {
+            UI.toast("Sin conexión backend — datos locales", "warn");
+          }
+          const local = await Store.listPartesLocal(obraId);
+          // Los locales que no están en el backend (pendientes de sync)
+          const remoteIds = new Set(remote.map(p => p.id));
+          const pendingLocal = local.filter(p => p._local && !remoteIds.has(p.id));
+          partes = remote.concat(pendingLocal);
+          if (dFrom) partes = partes.filter(p => p.fecha >= dFrom);
+          if (dTo)   partes = partes.filter(p => p.fecha <= dTo);
         }
       } catch (e) {
         partes = await Store.listPartesLocal(obraId);
-        UI.toast("Sin backend, mostrando datos locales", "warn");
+        UI.toast("Error cargando datos", "warn");
       }
 
       if (mode === "pend") {

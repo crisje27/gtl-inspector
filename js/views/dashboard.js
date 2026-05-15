@@ -232,12 +232,24 @@
     let partes = [];
     let fromRemote = false;
     try {
-      partes = await Sync.fetchPartes(obra.id, dFrom, dTo);
-      fromRemote = true;
+      // Traer del backend + combinar con locales pendientes
+      let remote = [];
+      try {
+        remote = await Sync.fetchPartes(obra.id, dFrom, dTo);
+        fromRemote = true;
+      } catch (e) {
+        UI.toast("Sin conexión backend — datos locales", "warn", 2200);
+      }
+      const local = await Store.listPartesLocal(obra.id);
+      const remoteIds = new Set(remote.map(p => p.id));
+      const pendingLocal = local.filter(p => p._local && !remoteIds.has(p.id));
+      partes = remote.concat(pendingLocal);
+      if (dFrom) partes = partes.filter(p => p.fecha >= dFrom);
+      if (dTo)   partes = partes.filter(p => p.fecha <= dTo);
     } catch (e) {
       const local = await Store.listPartesLocal(obra.id);
       partes = local.filter(p => (!dFrom || p.fecha >= dFrom) && (!dTo || p.fecha <= dTo));
-      UI.toast("Sin conexión backend — datos locales", "warn", 2200);
+      UI.toast("Error cargando datos", "warn", 2200);
     }
 
     // Deduplicar por id
