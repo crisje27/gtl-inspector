@@ -482,28 +482,28 @@
     };
 
     const tramosHtml = (fo.tramos && fo.tramos.length)
-      ? `<table class="tbl"><thead><tr><th>Desde</th><th>Hasta</th><th>Actividad</th><th>Metros</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
+      ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Desde</th><th>Hasta</th><th>Actividad</th><th>Metros</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
           ${fo.tramos.map(t => `<tr>
             <td>Cám ${esc(t.camDesde)}</td><td>${t.camHasta === "Receptora" ? "<b>Receptora</b>" : "Cám " + esc(t.camHasta)}</td>
             <td>${esc(t.actividad)}</td><td>${t.metros ? esc(t.metros) + " m" : "—"}</td>
             <td><span class="badge ${t.estado === "OK" ? "ok" : t.estado === "Parcial" ? "warn" : "danger"}">${esc(t.estado)}</span></td>
             <td>${esc(t.obs || "")}</td>
           </tr>`).join("")}
-        </tbody></table>` : "<p class='none'>Sin tramos registrados</p>";
+        </tbody></table></div>` : "<p class='none'>Sin tramos registrados</p>";
 
     const patHtml = (pat.mediciones && pat.mediciones.length)
-      ? `<table class="tbl"><thead><tr><th>Locación</th><th>Ω</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
+      ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Locación</th><th>Ω</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
           ${pat.mediciones.map(m => {
             const v = parseFloat(m.ohm);
             const cls = !isNaN(v) ? (v > 2 ? "danger" : v > 1.5 ? "warn" : "ok") : "";
             return `<tr class="${cls}"><td>${esc(m.locacion)}</td><td>${esc(m.ohm) || "—"}</td><td>${esc(m.estado)}</td><td>${esc(m.obs || "")}</td></tr>`;
           }).join("")}
-        </tbody></table>` : "";
+        </tbody></table></div>` : "";
 
     const cuprosHtml = (pc.cupros && pc.cupros.length)
-      ? `<table class="tbl"><thead><tr><th>PK</th><th>Martillo</th><th>Resistencia</th></tr></thead><tbody>
+      ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>PK</th><th>Martillo</th><th>Resistencia</th></tr></thead><tbody>
           ${pc.cupros.map(c => `<tr><td>${esc(c.pk)}</td><td>${badge(c.martillo || "—", c.martillo === "PASS")}</td><td>${c.resistencia ? esc(c.resistencia) + " mΩ" : "—"}</td></tr>`).join("")}
-        </tbody></table>` : "";
+        </tbody></table></div>` : "";
 
     const tareasHtml = (arr) => (arr && arr.length)
       ? `<ul>${arr.map(t => `<li>${esc(t.desc || t.tag || "")} — <b>${esc(t.tipo || t.estado || "")}</b> ${t.avance != null ? t.avance + "%" : ""} ${t.obs ? "· " + esc(t.obs) : ""}</li>`).join("")}</ul>` : "";
@@ -547,69 +547,72 @@
     const instSection = has("inst") ? `
       <h3>🎛 Instrumentación</h3>
       ${inst.instrumentos && inst.instrumentos.length ? `
-        <table class="tbl"><thead><tr><th>TAG</th><th>Descripción</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
+        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>TAG</th><th>Descripción</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
           ${inst.instrumentos.map(t => `<tr>
             <td><b>${esc(t.tag || "")}</b></td>
             <td>${esc(t.desc || "")}</td>
             <td>${esc(t.estado || "")}</td>
             <td>${esc(t.obs || "")}</td>
           </tr>`).join("")}
-        </tbody></table>` : "<p class='none'>Sin instrumentos</p>"}` : "";
+        </tbody></table></div>` : "<p class='none'>Sin instrumentos</p>"}` : "";
 
     const civSection = has("civ") ? `
       <h3>🏗 Civil</h3>
       ${civ.tareas && civ.tareas.length ? `
-        <table class="tbl"><thead><tr><th>Tarea</th><th>Tipo</th><th>Avance</th><th>Obs</th></tr></thead><tbody>
+        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Tarea</th><th>Tipo</th><th>Avance</th><th>Obs</th></tr></thead><tbody>
           ${civ.tareas.map(t => `<tr>
             <td>${esc(t.desc || "")}</td>
             <td>${esc(t.tipo || "")}</td>
             <td>${t.avance != null ? t.avance + "%" : "—"}</td>
             <td>${esc(t.obs || "")}</td>
           </tr>`).join("")}
-        </tbody></table>` : "<p class='none'>Sin tareas civiles</p>"}` : "";
+        </tbody></table></div>` : "<p class='none'>Sin tareas civiles</p>"}` : "";
 
     const mecSection = has("mec") ? `
       <h3>⚙ Mecánico</h3>
       ${mec.tareas && mec.tareas.length ? `
-        <table class="tbl"><thead><tr><th>Tarea</th><th>Tipo</th><th>Avance</th><th>Obs</th></tr></thead><tbody>
+        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Tarea</th><th>Tipo</th><th>Avance</th><th>Obs</th></tr></thead><tbody>
           ${mec.tareas.map(t => `<tr>
             <td>${esc(t.desc || "")}</td>
             <td>${esc(t.tipo || "")}</td>
             <td>${t.avance != null ? t.avance + "%" : "—"}</td>
             <td>${esc(t.obs || "")}</td>
           </tr>`).join("")}
-        </tbody></table>` : "<p class='none'>Sin tareas mecánicas</p>"}` : "";
+        </tbody></table></div>` : "<p class='none'>Sin tareas mecánicas</p>"}` : "";
 
     const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Parte Diario — ${esc(p.obraNombre)} ${fd}</title>
     <style>
       *{margin:0;padding:0;box-sizing:border-box;}
-      body{font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#111;background:#fff;padding:20px;}
-      .header{background:#0055A4;color:#fff;padding:12px 16px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-      .header h1{font-size:18px;letter-spacing:1px;} .header h1 span{color:#2ECC40;}
-      .header .meta{text-align:right;font-size:11px;opacity:.9;line-height:1.6;}
-      h2{background:#0078D4;color:#fff;padding:5px 10px;margin:14px 0 6px;font-size:12px;letter-spacing:.5px;border-radius:2px;}
-      h3{color:#0055A4;border-bottom:1px solid #cce;padding:4px 0 2px;margin:10px 0 4px;font-size:12px;}
-      h4{font-size:11px;}
-      table.tbl{width:100%;border-collapse:collapse;margin:4px 0;}
-      table.tbl th{background:#0055A4;color:#fff;padding:4px 6px;font-size:11px;text-align:left;}
-      table.tbl td{padding:4px 6px;border-bottom:1px solid #eee;vertical-align:top;}
+      body{font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#111;background:#fff;padding:12px;max-width:100vw;overflow-x:hidden;}
+      .header{background:#0055A4;color:#fff;padding:12px;border-radius:6px;margin-bottom:14px;}
+      .header h1{font-size:16px;letter-spacing:.5px;margin-bottom:6px;} .header h1 span{color:#2ECC40;}
+      .header .meta{font-size:12px;opacity:.9;line-height:1.6;}
+      h2{background:#0078D4;color:#fff;padding:6px 10px;margin:14px 0 8px;font-size:13px;letter-spacing:.5px;border-radius:4px;}
+      h3{color:#0055A4;border-bottom:2px solid #cce;padding:4px 0 2px;margin:12px 0 6px;font-size:13px;}
+      h4{font-size:12px;}
+      .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:4px 0;}
+      table.tbl{width:100%;border-collapse:collapse;min-width:320px;}
+      table.tbl th{background:#0055A4;color:#fff;padding:5px 6px;font-size:11px;text-align:left;white-space:nowrap;}
+      table.tbl td{padding:5px 6px;border-bottom:1px solid #eee;vertical-align:top;font-size:12px;}
       table.tbl tr.ok td{background:#f0fff4;} table.tbl tr.warn td{background:#fffbeb;} table.tbl tr.danger td{background:#fff0f0;}
       table.kv{width:100%;border-collapse:collapse;margin:4px 0;}
-      table.kv td{padding:3px 6px;border-bottom:1px dotted #ddd;vertical-align:top;}
-      table.kv td.k{font-weight:bold;width:38%;color:#333;}
-      .badge{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:bold;}
-      .badge.ok{background:#d1fae5;color:#065f46;} .badge.warn{background:#fef3c7;color:#92400e;} .badge.danger{background:#fee2e2;color:#991b1b;}
+      table.kv td{padding:4px 6px;border-bottom:1px dotted #ddd;vertical-align:top;word-break:break-word;}
+      table.kv td.k{font-weight:bold;width:35%;color:#333;font-size:12px;}
+      .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold;white-space:nowrap;}
+      .badge.ok{background:#d1fae5;color:#065f46;} .badge.warn{background:#fef3c7;color:#92400e;} .badge.danger{background:#fee2e2;color:#991b1b;} .badge.muted{background:#e5e7eb;color:#374151;}
       .hse-ok{color:#065f46;font-weight:bold;} .hse-bad{color:#991b1b;font-weight:bold;}
-      ul{margin:4px 0 4px 18px;} li{margin:2px 0;}
+      ul{margin:4px 0 4px 18px;} li{margin:3px 0;line-height:1.4;}
       p.none{color:#888;font-style:italic;margin:4px 0;}
-      .footer{margin-top:20px;border-top:1px solid #ccc;padding-top:8px;font-size:10px;color:#888;display:flex;justify-content:space-between;}
-      .firma-box{border:1px solid #ccc;padding:6px 12px;border-radius:4px;display:inline-block;min-width:200px;margin-top:6px;font-size:11px;}
+      .footer{margin-top:20px;border-top:1px solid #ccc;padding-top:8px;font-size:10px;color:#888;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px;}
+      .firma-box{border:1px solid #ccc;padding:8px 12px;border-radius:4px;display:inline-block;min-width:160px;margin-top:6px;font-size:12px;}
       .photo-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
-      .photo-grid .ph{border:1px solid #ddd;border-radius:4px;padding:4px;background:#fafafa;text-align:center;}
-      .photo-grid .ph img{max-width:200px;max-height:160px;display:block;border-radius:2px;}
-      .photo-grid .ph small{display:block;font-size:9px;color:#666;margin-top:2px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-      @media print{body{padding:10px;} .no-print{display:none;} .photo-grid .ph{break-inside:avoid;}}
+      .photo-grid .ph{border:1px solid #ddd;border-radius:4px;padding:4px;background:#fafafa;text-align:center;flex:1;min-width:100px;max-width:200px;}
+      .photo-grid .ph img{width:100%;max-height:160px;object-fit:cover;display:block;border-radius:2px;}
+      .photo-grid .ph small{display:block;font-size:9px;color:#666;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+      @media screen and (min-width:600px){body{padding:20px;font-size:12px;max-width:800px;margin:0 auto;} .header{display:flex;justify-content:space-between;align-items:center;} .header .meta{text-align:right;} .header h1{font-size:18px;margin-bottom:0;}}
+      @media print{body{padding:10px;font-size:11px;} .no-print{display:none;} .photo-grid .ph{break-inside:avoid;} .tbl-wrap{overflow:visible;}}
       @page{size:A4;margin:15mm 12mm;}
     </style>
     </head><body>
