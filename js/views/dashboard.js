@@ -1123,6 +1123,7 @@
     const urgentes = abiertos.filter(x => /Cr[ií]tico|Alto/.test(x.criticidad || ""));
     if (!all.length) { box.innerHTML = `<div class="empty"><p>✓ Sin pendientes registrados.</p></div>`; return; }
     box.style.height = "auto";
+    box.style.overflow = "visible";
     box.style.padding = "var(--sp-3)";
     const resumen = `<div class="row-wrap mb-3" style="gap:var(--sp-2);">
       <span class="chip warn">🔴 ${urgentes.length} urgente${urgentes.length === 1 ? "" : "s"}</span>
@@ -1130,16 +1131,17 @@
       <span class="chip ok">✓ ${cerrados.length} cerrado${cerrados.length === 1 ? "" : "s"}</span>
     </div>`;
     const showList = urgentes.length ? urgentes : abiertos;
-    box.innerHTML = resumen + (showList.length ? `<table class="tbl">
-      <thead><tr><th>Fecha</th><th>Descripción</th><th>Resp.</th><th>Crit.</th><th>Estado</th></tr></thead>
-      <tbody>${showList.slice(0, 20).map(x => `<tr>
-        <td class="mono">${UI.formatDate(x.fecha)}</td>
-        <td>${esc(x.desc || "")}</td>
-        <td>${esc(x.responsable || "—")}</td>
-        <td><span class="badge ${/Cr[ií]tico/.test(x.criticidad) ? "danger" : "warn"}">${esc(x.criticidad || "")}</span></td>
-        <td><span class="badge ${(x.estado || "Abierto") === "Cerrado" ? "ok" : "muted"}">${esc(x.estado || "Abierto")}</span></td>
-      </tr>`).join("")}</tbody>
-    </table>` : `<p class="text-muted fs-14">Sin pendientes urgentes abiertos.</p>`);
+    box.innerHTML = resumen + (showList.length ? `<div class="pend-cards">
+      ${showList.slice(0, 20).map(x => `<div class="pend-card-item">
+        <div class="pend-desc">${esc(x.desc || "Sin descripción")}</div>
+        <div class="pend-meta">
+          <span class="mono">${UI.formatDate(x.fecha)}</span>
+          ${x.responsable ? `<span>· ${esc(x.responsable)}</span>` : ""}
+          <span class="badge ${/Cr[ií]tico/.test(x.criticidad) ? "danger" : "warn"}">${esc(x.criticidad || "Medio")}</span>
+          <span class="badge ${(x.estado || "Abierto") === "Cerrado" ? "ok" : "muted"}">${esc(x.estado || "Abierto")}</span>
+        </div>
+      </div>`).join("")}
+    </div>` : `<p class="text-muted fs-14">Sin pendientes urgentes abiertos.</p>`);
   }
 
   function drawNCs(view, partes) {

@@ -323,10 +323,39 @@
 .dash-toolbar select, .dash-toolbar .input { flex: 1; min-width: 140px; }
 
 /* Dashboard: chart-card con tabla — scroll horizontal en mobile */
-.chart-card:has(.tbl) {
+.chart-card:has(.tbl),
+.chart-card:has(.pend-cards) {
   overflow-x: auto;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
 }
+/* Pendientes card list (mobile-friendly) */
+.pend-cards { display: flex; flex-direction: column; gap: var(--sp-2); }
+.pend-card-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--sp-2);
+  background: var(--bg-base);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pend-card-item .pend-desc {
+  font-size: var(--fs-14);
+  font-weight: 500;
+  color: var(--text-strong);
+  line-height: 1.3;
+  word-break: break-word;
+}
+.pend-card-item .pend-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  align-items: center;
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+}
+.pend-card-item .pend-meta .badge { font-size: 9px; }
 
 .dash-section { margin-bottom: var(--sp-4); }
 @media (min-width: 600px) {
@@ -381,6 +410,10 @@
   margin-bottom: var(--sp-2);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+}
+.chart-card:has(.pend-cards),
+.chart-card:has(.tbl) {
+  overflow: visible;
 }
 @media (min-width: 420px) {
   .chart-card { padding: var(--sp-3); margin-bottom: var(--sp-3); }
