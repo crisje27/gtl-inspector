@@ -581,39 +581,43 @@
         </tbody></table></div>` : "<p class='none'>Sin tareas mecánicas</p>"}` : "";
 
     const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
     <title>Parte Diario — ${esc(p.obraNombre)} ${fd}</title>
     <style>
       *{margin:0;padding:0;box-sizing:border-box;}
-      body{font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#111;background:#fff;padding:12px;max-width:100vw;overflow-x:hidden;}
-      .header{background:#0055A4;color:#fff;padding:12px;border-radius:6px;margin-bottom:14px;}
-      .header h1{font-size:16px;letter-spacing:.5px;margin-bottom:6px;} .header h1 span{color:#2ECC40;}
-      .header .meta{font-size:12px;opacity:.9;line-height:1.6;}
-      h2{background:#0078D4;color:#fff;padding:6px 10px;margin:14px 0 8px;font-size:13px;letter-spacing:.5px;border-radius:4px;}
-      h3{color:#0055A4;border-bottom:2px solid #cce;padding:4px 0 2px;margin:12px 0 6px;font-size:13px;}
-      h4{font-size:12px;}
-      .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:4px 0;}
-      table.tbl{width:100%;border-collapse:collapse;min-width:320px;}
-      table.tbl th{background:#0055A4;color:#fff;padding:5px 6px;font-size:11px;text-align:left;white-space:nowrap;}
-      table.tbl td{padding:5px 6px;border-bottom:1px solid #eee;vertical-align:top;font-size:12px;}
+      body{font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#111;background:#fff;padding:10px;max-width:100vw;overflow-x:hidden;-webkit-text-size-adjust:100%;}
+      .header{background:#0055A4;color:#fff;padding:10px;border-radius:6px;margin-bottom:12px;}
+      .header h1{font-size:15px;letter-spacing:.3px;margin-bottom:4px;line-height:1.3;} .header h1 span{color:#2ECC40;}
+      .header .meta{font-size:11px;opacity:.9;line-height:1.5;}
+      .header .meta div{margin-bottom:2px;}
+      h2{background:#0078D4;color:#fff;padding:5px 8px;margin:12px 0 6px;font-size:12px;letter-spacing:.4px;border-radius:4px;}
+      h3{color:#0055A4;border-bottom:2px solid #cce;padding:3px 0 2px;margin:10px 0 5px;font-size:12px;}
+      h4{font-size:11px;}
+      .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:4px 0;max-width:100%;}
+      table.tbl{width:100%;border-collapse:collapse;font-size:11px;table-layout:auto;}
+      table.tbl th{background:#0055A4;color:#fff;padding:4px 5px;font-size:10px;text-align:left;white-space:nowrap;}
+      table.tbl td{padding:4px 5px;border-bottom:1px solid #eee;vertical-align:top;font-size:11px;word-break:break-word;}
       table.tbl tr.ok td{background:#f0fff4;} table.tbl tr.warn td{background:#fffbeb;} table.tbl tr.danger td{background:#fff0f0;}
-      table.kv{width:100%;border-collapse:collapse;margin:4px 0;}
-      table.kv td{padding:4px 6px;border-bottom:1px dotted #ddd;vertical-align:top;word-break:break-word;}
-      table.kv td.k{font-weight:bold;width:35%;color:#333;font-size:12px;}
-      .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold;white-space:nowrap;}
+      table.kv{width:100%;border-collapse:collapse;margin:4px 0;table-layout:fixed;}
+      table.kv td{padding:3px 5px;border-bottom:1px dotted #ddd;vertical-align:top;word-break:break-word;font-size:11px;}
+      table.kv td.k{font-weight:bold;width:38%;color:#333;}
+      .badge{display:inline-block;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:bold;white-space:nowrap;}
       .badge.ok{background:#d1fae5;color:#065f46;} .badge.warn{background:#fef3c7;color:#92400e;} .badge.danger{background:#fee2e2;color:#991b1b;} .badge.muted{background:#e5e7eb;color:#374151;}
       .hse-ok{color:#065f46;font-weight:bold;} .hse-bad{color:#991b1b;font-weight:bold;}
-      ul{margin:4px 0 4px 18px;} li{margin:3px 0;line-height:1.4;}
-      p.none{color:#888;font-style:italic;margin:4px 0;}
-      .footer{margin-top:20px;border-top:1px solid #ccc;padding-top:8px;font-size:10px;color:#888;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px;}
-      .firma-box{border:1px solid #ccc;padding:8px 12px;border-radius:4px;display:inline-block;min-width:160px;margin-top:6px;font-size:12px;}
-      .photo-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
-      .photo-grid .ph{border:1px solid #ddd;border-radius:4px;padding:4px;background:#fafafa;text-align:center;flex:1;min-width:100px;max-width:200px;}
-      .photo-grid .ph img{width:100%;max-height:160px;object-fit:cover;display:block;border-radius:2px;}
-      .photo-grid .ph small{display:block;font-size:9px;color:#666;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-      @media screen and (min-width:600px){body{padding:20px;font-size:12px;max-width:800px;margin:0 auto;} .header{display:flex;justify-content:space-between;align-items:center;} .header .meta{text-align:right;} .header h1{font-size:18px;margin-bottom:0;}}
-      @media print{body{padding:10px;font-size:11px;} .no-print{display:none;} .photo-grid .ph{break-inside:avoid;} .tbl-wrap{overflow:visible;}}
-      @page{size:A4;margin:15mm 12mm;}
+      ul{margin:4px 0 4px 16px;} li{margin:2px 0;line-height:1.3;font-size:11px;}
+      p.none{color:#888;font-style:italic;margin:4px 0;font-size:11px;}
+      .footer{margin-top:16px;border-top:1px solid #ccc;padding-top:6px;font-size:9px;color:#888;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px;}
+      .firma-box{border:1px solid #ccc;padding:6px 10px;border-radius:4px;display:inline-block;min-width:120px;margin-top:6px;font-size:11px;}
+      .photo-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+      .photo-grid .ph{border:1px solid #ddd;border-radius:4px;padding:3px;background:#fafafa;text-align:center;flex:1;min-width:80px;max-width:48%;}
+      .photo-grid .ph img{width:100%;max-height:140px;object-fit:cover;display:block;border-radius:2px;}
+      .photo-grid .ph small{display:block;font-size:8px;color:#666;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+      .actions{position:sticky;top:0;z-index:99;background:#fff;padding:8px 0;margin-bottom:8px;border-bottom:1px solid #eee;display:flex;gap:8px;flex-wrap:wrap;}
+      .actions button{padding:8px 14px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+      .btn-print{background:#0055A4;color:#fff;} .btn-share{background:#2ECC40;color:#fff;}
+      @media screen and (min-width:600px){body{padding:24px;font-size:12px;max-width:800px;margin:0 auto;} .header{display:flex;justify-content:space-between;align-items:center;padding:14px;} .header .meta{text-align:right;} .header h1{font-size:18px;margin-bottom:0;} table.tbl td,table.tbl th{padding:5px 6px;font-size:12px;} table.kv td{font-size:12px;padding:4px 6px;} h2{font-size:13px;padding:6px 10px;} li{font-size:12px;}}
+      @media print{body{padding:8mm;font-size:10px;} .no-print,.actions{display:none!important;} .photo-grid .ph{break-inside:avoid;} .tbl-wrap{overflow:visible;} table.tbl{font-size:9px;} table.tbl th,table.tbl td{padding:3px 4px;} table.kv td{padding:3px 4px;font-size:10px;} h2{font-size:11px;padding:4px 8px;margin:10px 0 5px;} h3{font-size:11px;} .header{padding:8px;} .header h1{font-size:14px;} .header .meta{font-size:10px;}}
+      @page{size:A4;margin:10mm 8mm;}
     </style>
     </head><body>
     <div class="header">
@@ -678,7 +682,18 @@
       <span>GTL Inspector — YPF Upstream &nbsp;|&nbsp; GRUPO TERGO LAF</span>
       <span>Generado: ${new Date().toLocaleString("es-AR")}</span>
     </div>
-    <script>window.onload=()=>{window.print();}<\/script>
+    <script>
+    document.addEventListener('DOMContentLoaded',()=>{
+      const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if(!isMobile){window.print();return;}
+      const bar=document.createElement('div');bar.className='actions no-print';
+      bar.innerHTML='<button class="btn-print" onclick="window.print()">🖨 Imprimir / PDF</button>'
+        +(navigator.share?'<button class="btn-share" id="shareBtn">📤 Compartir</button>':'');
+      document.body.prepend(bar);
+      const sb=document.getElementById('shareBtn');
+      if(sb)sb.onclick=async()=>{try{await navigator.share({title:document.title,text:'Parte Diario GTL',url:location.href})}catch(e){}};
+    });
+    <\/script>
     </body></html>`;
 
     const w = window.open("", "_blank");
