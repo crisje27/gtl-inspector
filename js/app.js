@@ -598,14 +598,21 @@
       table.tbl th{background:#0055A4;color:#fff;padding:4px 5px;font-size:10px;text-align:left;white-space:nowrap;}
       table.tbl td{padding:4px 5px;border-bottom:1px solid #eee;vertical-align:top;font-size:11px;word-break:break-word;}
       table.tbl tr.ok td{background:#f0fff4;} table.tbl tr.warn td{background:#fffbeb;} table.tbl tr.danger td{background:#fff0f0;}
-      table.kv{width:100%;border-collapse:collapse;margin:4px 0;table-layout:fixed;}
+      table.kv{width:100%;border-collapse:collapse;margin:4px 0;}
       table.kv td{padding:3px 5px;border-bottom:1px dotted #ddd;vertical-align:top;word-break:break-word;font-size:11px;}
-      table.kv td.k{font-weight:bold;width:38%;color:#333;}
+      table.kv td.k{font-weight:bold;white-space:nowrap;color:#333;padding-right:8px;width:1%;}
       .badge{display:inline-block;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:bold;white-space:nowrap;}
       .badge.ok{background:#d1fae5;color:#065f46;} .badge.warn{background:#fef3c7;color:#92400e;} .badge.danger{background:#fee2e2;color:#991b1b;} .badge.muted{background:#e5e7eb;color:#374151;}
       .hse-ok{color:#065f46;font-weight:bold;} .hse-bad{color:#991b1b;font-weight:bold;}
       ul{margin:4px 0 4px 16px;} li{margin:2px 0;line-height:1.3;font-size:11px;}
       p.none{color:#888;font-style:italic;margin:4px 0;font-size:11px;}
+      .pend-list{display:flex;flex-direction:column;gap:6px;margin:4px 0 8px;}
+      .pend-item-pdf{border:1px solid #ddd;border-radius:5px;padding:6px 8px;background:#fafbfc;display:flex;flex-direction:column;gap:3px;}
+      .pend-item-pdf.pend-closed{background:#f0fff4;border-color:#86efac;opacity:.8;}
+      .pend-item-pdf.pend-closed .pend-desc-pdf{text-decoration:line-through;color:#666;}
+      .pend-desc-pdf{font-size:12px;line-height:1.3;color:#111;word-break:break-word;}
+      .pend-info-pdf{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:10px;color:#555;}
+      .pend-info-pdf b{font-weight:600;color:#333;}
       .footer{margin-top:16px;border-top:1px solid #ccc;padding-top:6px;font-size:9px;color:#888;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px;}
       .firma-box{border:1px solid #ccc;padding:6px 10px;border-radius:4px;display:inline-block;min-width:120px;margin-top:6px;font-size:11px;}
       .photo-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
@@ -647,9 +654,33 @@
     ${(foSection + patSection + pcSection + elecSection + instSection + civSection + mecSection) || "<p class='none'>Sin especialidades cargadas para esta obra.</p>"}
 
     <h2>4. HAND OVER</h2>
+    ${ho.pendientes && ho.pendientes.length ? `
+      <h4 style="margin:6px 0 4px;color:#333;">Pendientes (${ho.pendientes.length})</h4>
+      <div class="pend-list">
+        ${ho.pendientes.map(x => {
+          if (typeof x === "string") return `<div class="pend-item-pdf"><span class="pend-desc-pdf">${esc(x)}</span></div>`;
+          const desc = esc(x.texto || x.desc || "");
+          const cerrado = x.estado === "Cerrado";
+          return `<div class="pend-item-pdf${cerrado ? " pend-closed" : ""}">
+            <span class="pend-desc-pdf">${desc}</span>
+            <span class="pend-info-pdf">
+              ${x.responsable ? `<b>${esc(x.responsable)}</b>` : ""}
+              ${x.criticidad ? `<span class="badge ${/Cr[ií]tico/.test(x.criticidad) ? "danger" : /Alto/.test(x.criticidad) ? "warn" : "muted"}">${esc(x.criticidad)}</span>` : ""}
+              ${cerrado ? '<span class="badge ok">Cerrado</span>' : '<span class="badge muted">Abierto</span>'}
+            </span>
+          </div>`;
+        }).join("")}
+      </div>` : `<p class="none">Sin pendientes.</p>`}
+    ${ho.noConformidades && ho.noConformidades.length ? `
+      <h4 style="margin:10px 0 4px;color:#333;">No Conformidades (${ho.noConformidades.length})</h4>
+      <div class="pend-list">
+        ${ho.noConformidades.map(x => {
+          if (typeof x === "string") return `<div class="pend-item-pdf"><span class="pend-desc-pdf">${esc(x)}</span></div>`;
+          const desc = esc(x.texto || x.desc || JSON.stringify(x));
+          return `<div class="pend-item-pdf"><span class="pend-desc-pdf">${desc}</span></div>`;
+        }).join("")}
+      </div>` : ""}
     <table class="kv">
-      ${row("Pendientes", nl2li(ho.pendientes))}
-      ${row("No Conformidades", nl2li(ho.noConformidades))}
       ${row("Cambios de programa", ho.cambiosPrograma || null)}
       ${row("Comunicaciones", ho.comunicacion || null)}
     </table>

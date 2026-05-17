@@ -4,7 +4,7 @@
    Background Sync para envíos pendientes
    ============================================================ */
 
-const VERSION = "v2.6.0";
+const VERSION = "v2.7.0";
 const CACHE_STATIC = `gtl-static-${VERSION}`;
 const CACHE_RUNTIME = `gtl-runtime-${VERSION}`;
 
