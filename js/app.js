@@ -568,8 +568,7 @@
         return esc(txt);
       }).filter(Boolean).join(' · ') || 'Sin tareas en el día de hoy';
     };
-    const bar = (p, color) => `<div class="bar"><div class="bar-fill" style="width:${p}%;background:${color || '#003087'};"><span>${p}%</span></div></div>`;
-    const barLoc = (loc) => `<div class="locbar"><div class="locbar-label">${esc(loc.id)}</div>${bar(loc.avance, loc.avance >= 80 ? '#00884A' : loc.avance >= 30 ? '#D97706' : '#CC1F1F')}</div>`;
+    // (barras CSS eliminadas — se usan tablas limpias)
     const patEstadoBadge = (loc) => {
       if (loc.estado === 'Liberada') return `<span class="badge ok">Liberada</span>`;
       if (loc.fueraNorma) return `<span class="badge danger">${loc.resistencia}Ω &gt; 2Ω</span>`;
@@ -632,35 +631,24 @@
       .stat-card{border:1px solid #d1d9e6;border-radius:4px;padding:8px;background:#fff;}
       .stat-card h4{font-family:'Barlow Condensed',sans-serif;color:#003087;font-size:12px;font-weight:700;text-transform:uppercase;margin-bottom:6px;border-bottom:2px solid #FFD100;padding-bottom:3px;letter-spacing:.3px;}
       .stat-card .stat-sub{font-size:9px;color:#475569;margin-bottom:6px;}
-      .locbar{margin:5px 0;}
-      .locbar-label{font-size:9px;font-weight:700;color:#003087;margin-bottom:2px;display:flex;justify-content:space-between;}
-      .bar{background:#E5E7EB;height:16px;border-radius:8px;overflow:hidden;position:relative;}
-      .bar-fill{height:100%;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;transition:width .3s;min-width:32px;}
-      .bar-fill span{color:#fff;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;}
-      .summary-line{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dotted #e5e7eb;font-size:10px;}
-      .summary-line:last-child{border-bottom:none;}
-      .summary-line b{color:#003087;}
-      .summary-line .val{font-family:'JetBrains Mono',monospace;font-weight:700;}
-      .avance-total{background:#003087;color:#fff;padding:6px 10px;border-radius:3px;display:flex;justify-content:space-between;align-items:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;margin-top:6px;}
-      .avance-total .val{background:#FFD100;color:#003087;padding:2px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;}
-      .pat-grid{display:grid;grid-template-columns:1fr;gap:4px;}
-      .pat-row{display:grid;grid-template-columns:80px 1fr auto;gap:6px;padding:4px 6px;background:#F4F6FA;border-radius:3px;font-size:9px;align-items:center;}
-      .pat-row b{color:#003087;font-family:'JetBrains Mono',monospace;}
-      .pat-row .obs{color:#475569;font-size:9px;}
+      /* Tablas estadísticas limpias */
+      .tbl-stats{width:100%;border-collapse:collapse;font-size:10px;margin:4px 0;}
+      .tbl-stats th{background:#003087;color:#fff;padding:4px 6px;text-align:left;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
+      .tbl-stats td{padding:4px 6px;border-bottom:1px solid #e5e7eb;vertical-align:middle;font-size:10px;}
+      .tbl-stats tr:nth-child(even) td{background:#F8F9FC;}
+      .tbl-stats .num{font-family:'JetBrains Mono',monospace;font-weight:700;text-align:right;white-space:nowrap;color:#0D1B3E;}
+      .tbl-stats .num.ok{color:#00884A;} .tbl-stats .num.warn{color:#D97706;} .tbl-stats .num.danger{color:#CC1F1F;} .tbl-stats .num.low{color:#94a3b8;}
+      .tbl-stats .loc-id{font-weight:600;color:#003087;font-size:9px;white-space:nowrap;}
+      .tbl-stats .obs-cell{font-size:9px;color:#475569;max-width:120px;word-break:break-word;}
+      .tbl-stats .total-row td{background:#003087;color:#fff;font-weight:700;font-family:'Barlow Condensed',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.3px;padding:5px 6px;}
+      .tbl-stats .total-row .num{color:#FFD100;}
+      .tbl-stats .row-cerrado td{opacity:.5;text-decoration:line-through;}
+      .fo-etapa-box{border:1px solid #d1d9e6;border-radius:3px;padding:6px;margin-bottom:8px;background:#F4F6FA;}
+      .fo-etapa-label{color:#003087;font-weight:700;font-size:10px;margin-bottom:4px;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.3px;}
+      .avance-highlight{background:#FFD100;color:#003087;padding:8px 12px;border-radius:3px;display:flex;justify-content:space-between;align-items:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;margin-top:6px;}
+      .avance-highlight .val{background:#003087;color:#FFD100;padding:3px 10px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:16px;}
       .badge{display:inline-block;padding:2px 7px;border-radius:8px;font-size:8px;font-weight:700;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px;}
       .badge.ok{background:#d1fae5;color:#00884A;} .badge.warn{background:#fef3c7;color:#D97706;} .badge.danger{background:#fee2e2;color:#CC1F1F;} .badge.muted{background:#e5e7eb;color:#475569;}
-      .ducto-bar{position:relative;height:36px;background:linear-gradient(90deg,#E5E7EB,#E5E7EB);border-radius:18px;margin:14px 0 50px;overflow:visible;}
-      .ducto-progress{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,#22d3ee,#003087);border-radius:18px;transition:width .3s;}
-      .ducto-loc{position:absolute;top:-2px;width:12px;height:40px;background:#FFD100;border:2px solid #003087;border-radius:3px;transform:translateX(-50%);}
-      .ducto-loc::after{content:attr(data-label);position:absolute;top:42px;left:50%;transform:translateX(-50%) rotate(-35deg);font-size:7px;font-weight:700;color:#003087;white-space:nowrap;font-family:'JetBrains Mono',monospace;transform-origin:top left;}
-      .ducto-marker-frente{position:absolute;top:-8px;width:0;height:52px;border-left:3px dashed #CC1F1F;transform:translateX(-50%);}
-      .ducto-marker-frente::after{content:'◀ FRENTE ' attr(data-pk);position:absolute;top:-12px;left:6px;font-size:8px;font-weight:700;color:#CC1F1F;white-space:nowrap;background:#fff;padding:1px 4px;border-radius:2px;}
-      .fo-etapa-chart{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:center;padding:4px 0;font-size:10px;}
-      .fo-etapa-chart b{color:#003087;font-size:9px;text-transform:uppercase;min-width:100px;flex-shrink:0;}
-      .fo-etapa-chart .bar{flex:1;min-width:80px;}
-      .fo-etapa-chart .val{font-family:'JetBrains Mono',monospace;font-weight:700;text-align:right;white-space:nowrap;min-width:50px;flex-shrink:0;}
-      .camaras-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;}
-      .camaras-list span{background:#F4F6FA;border:1px solid #d1d9e6;border-radius:3px;padding:2px 6px;font-size:8px;color:#003087;font-family:'JetBrains Mono',monospace;}
       .photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px;}
       .photo-grid .ph{border:1px solid #d1d9e6;border-radius:3px;padding:3px;background:#fafafa;text-align:center;}
       .photo-grid .ph img{width:100%;max-height:140px;object-fit:cover;display:block;border-radius:2px;}
@@ -803,107 +791,113 @@
         <div><b>Total ducto:</b> 45.133 m · ${fmtPK(OB377.ductoInicio)} → ${fmtPK(OB377.ductoFin)}</div>
       </div>
 
-      <!-- Barra lineal del ducto con frente actual -->
-      <div class="section-title">Avance lineal del ducto (frente de pre-tapada FO)</div>
-      <div class="ducto-bar">
-        <div class="ducto-progress" style="width:${Math.min(100, Math.round(((frenteActual - OB377.ductoInicio) / (OB377.ductoFin - OB377.ductoInicio)) * 100))}%"></div>
-        ${OB377.locaciones.map(L => {
-          const pos = ((L.pkMetros - OB377.ductoInicio) / (OB377.ductoFin - OB377.ductoInicio)) * 100;
-          return `<div class="ducto-loc" style="left:${pos}%" data-label="${L.id}"></div>`;
-        }).join('')}
-        ${frenteActual > OB377.ductoInicio ? `<div class="ducto-marker-frente" style="left:${Math.min(100, ((frenteActual - OB377.ductoInicio) / (OB377.ductoFin - OB377.ductoInicio)) * 100)}%" data-pk="${fmtPK(frenteActual)}"></div>` : ''}
-      </div>
-
       <div class="stats-grid">
         <!-- Canalizaciones E&I -->
         <div class="stat-card">
           <h4>Canalizaciones E&I</h4>
-          <div class="stat-sub">Estado de canalización por locación</div>
-          ${anyMatch
-            ? canalPorLoc.map(barLoc).join('')
-            : elecTareas.map(t => `<div class="locbar"><div class="locbar-label">${esc(t.locacion || t.desc || '—')}</div>${bar(parseInt(t.avance,10)||0, (parseInt(t.avance,10)||0)>=80?'#00884A':(parseInt(t.avance,10)||0)>=30?'#D97706':'#CC1F1F')}</div>`).join('')}
-          <div class="avance-total"><span>Avance general</span><span class="val">${canalAvanceGeneral}%</span></div>
-          ${anyMatch
-            ? canalPorLoc.map(L => `<div class="summary-line"><b>${esc(L.id)}:</b><span>${esc(L.desc.slice(0, 80))}</span><span class="val">${L.avance}%</span></div>`).join('')
-            : elecTareas.map(t => `<div class="summary-line"><b>${esc(t.locacion || '—')}:</b><span>${esc((t.desc||t.tarea||'').slice(0,80))}</span><span class="val">${t.avance||0}%</span></div>`).join('')}
+          <table class="tbl-stats">
+            <thead><tr><th>Locación</th><th>Descripción</th><th>Avance</th></tr></thead>
+            <tbody>
+              ${anyMatch
+                ? canalPorLoc.map(L => `<tr><td class="loc-id">${esc(L.id)}</td><td>${esc(L.desc.slice(0,80))}</td><td class="num ${L.avance>=80?'ok':L.avance>=30?'warn':'low'}">${L.avance}%</td></tr>`).join('')
+                : elecTareas.map(t => `<tr><td class="loc-id">${esc(t.locacion||'—')}</td><td>${esc((t.desc||t.tarea||'').slice(0,80))}</td><td class="num ${(parseInt(t.avance,10)||0)>=80?'ok':(parseInt(t.avance,10)||0)>=30?'warn':'low'}">${t.avance||0}%</td></tr>`).join('')}
+            </tbody>
+            <tfoot><tr class="total-row"><td colspan="2">Avance general</td><td class="num">${canalAvanceGeneral}%</td></tr></tfoot>
+          </table>
         </div>
 
         <!-- Protección Catódica + PAT -->
         <div class="stat-card">
           <h4>Protección Catódica</h4>
-          <div class="stat-sub">Puntos de medición (cupros)</div>
-          <div class="summary-line"><b>Montados (PASS):</b><span class="val">${cuprosOK}</span></div>
-          <div class="summary-line"><b>Totales planificados:</b><span class="val">${OB377.totalCupros}</span></div>
-          <div class="avance-total"><span>Avance</span><span class="val">${pcPct}%</span></div>
+          <table class="tbl-stats">
+            <tbody>
+              <tr><td>Cupros ejecutadas (PASS)</td><td class="num">${cuprosOK}</td></tr>
+              <tr><td>Total planificadas</td><td class="num">${OB377.totalCupros}</td></tr>
+            </tbody>
+            <tfoot><tr class="total-row"><td>Avance</td><td class="num">${pcPct}%</td></tr></tfoot>
+          </table>
 
-          <h4 style="margin-top:12px;">Avances P.A.T.</h4>
-          <div class="stat-sub">Resistencia ≤ ${OB377.patLimite}Ω · Liberación por locación</div>
-          <div class="pat-grid">
-            ${patPorLoc.map(L => `<div class="pat-row">
-              <b>${esc(L.id)}</b>
-              <span class="obs">${L.resistencia != null ? `<b style="color:${L.fueraNorma ? '#CC1F1F' : '#00884A'};">${L.resistencia}Ω</b>` : 'Sin medición'}${L.obs ? ' · ' + esc(L.obs.slice(0, 40)) : ''}</span>
-              ${patEstadoBadge(L)}
-            </div>`).join('')}
-          </div>
-          <div class="avance-total"><span>Avances P.A.T.</span><span class="val">${patPctTotal}%</span></div>
+          <h4 style="margin-top:10px;">Avances P.A.T.</h4>
+          <table class="tbl-stats">
+            <thead><tr><th>Locación</th><th>Resistencia</th><th>Estado</th><th>Observación</th></tr></thead>
+            <tbody>
+              ${patPorLoc.map(L => `<tr>
+                <td class="loc-id">${esc(L.id)}</td>
+                <td class="num ${L.fueraNorma?'danger':L.resistencia!=null?'ok':''}">${L.resistencia != null ? L.resistencia + ' Ω' : 'S/M'}</td>
+                <td>${patEstadoBadge(L)}</td>
+                <td class="obs-cell">${esc((L.obs||'').slice(0,40))}</td>
+              </tr>`).join('')}
+            </tbody>
+            <tfoot><tr class="total-row"><td colspan="3">Avance P.A.T.</td><td class="num">${patPctTotal}%</td></tr></tfoot>
+          </table>
         </div>
 
-        <!-- Fibra Óptica Etapa 1 -->
+        <!-- Fibra Óptica por Etapas -->
         <div class="stat-card full">
           <h4>Fibra Óptica — Avance por Etapas</h4>
-
-          <div style="border:1px solid #d1d9e6;border-radius:3px;padding:6px;margin-bottom:8px;background:#F4F6FA;">
-            <b style="color:#003087;font-size:10px;">${OB377.etapa1.label}</b>
-            <div class="fo-etapa-chart"><b>Pre-tapada ducto</b>${bar(pct(e1.pretapada, e1.total), '#22d3ee')}<span class="val" >${e1.pretapada.toLocaleString('es-AR')} m</span></div>
-            <div class="fo-etapa-chart"><b>Tendido FO</b>${bar(pct(e1.tendido, e1.total), '#a78bfa')}<span class="val" >${e1.tendido.toLocaleString('es-AR')} m</span></div>
-            <div class="fo-etapa-chart"><b>Tapada FO</b>${bar(pct(e1.tapadaFinal, e1.total), '#fb923c')}<span class="val" >${e1.tapadaFinal.toLocaleString('es-AR')} m</span></div>
-            <div class="avance-total" style="margin-top:6px;font-size:11px;"><span>Avance Total Tramo 1</span><span class="val">${tramo1Pct}%</span></div>
+          <div class="fo-etapa-box">
+            <div class="fo-etapa-label">${OB377.etapa1.label}</div>
+            <table class="tbl-stats">
+              <thead><tr><th>Actividad</th><th>Ejecutado</th><th>Total</th><th>%</th></tr></thead>
+              <tbody>
+                <tr><td>Pre-tapada ducto</td><td class="num">${e1.pretapada.toLocaleString('es-AR')} m</td><td class="num">${e1.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e1.pretapada,e1.total)}%</td></tr>
+                <tr><td>Tendido FO</td><td class="num">${e1.tendido.toLocaleString('es-AR')} m</td><td class="num">${e1.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e1.tendido,e1.total)}%</td></tr>
+                <tr><td>Tapada FO</td><td class="num">${e1.tapadaFinal.toLocaleString('es-AR')} m</td><td class="num">${e1.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e1.tapadaFinal,e1.total)}%</td></tr>
+              </tbody>
+              <tfoot><tr class="total-row"><td colspan="3">Avance Total Tramo 1</td><td class="num">${tramo1Pct}%</td></tr></tfoot>
+            </table>
           </div>
 
-          <div style="border:1px solid #d1d9e6;border-radius:3px;padding:6px;margin-bottom:8px;background:#F4F6FA;">
-            <b style="color:#003087;font-size:10px;">${OB377.etapa2.label}</b>
-            <div class="fo-etapa-chart"><b>Pre-tapada</b>${bar(pct(e2.pretapada, e2.total), '#22d3ee')}<span class="val" >${e2.pretapada.toLocaleString('es-AR')} m</span></div>
-            <div class="fo-etapa-chart"><b>Tendido FO</b>${bar(pct(e2.tendido, e2.total), '#a78bfa')}<span class="val" >${e2.tendido.toLocaleString('es-AR')} m</span></div>
-            <div class="fo-etapa-chart"><b>1/2 Tapada + Malla</b>${bar(pct(e2.mediaTapada, e2.total), '#fbbf24')}<span class="val" >${e2.mediaTapada.toLocaleString('es-AR')} m</span></div>
-            <div class="fo-etapa-chart"><b>Tapada Final</b>${bar(pct(e2.tapadaFinal, e2.total), '#fb923c')}<span class="val" >${e2.tapadaFinal.toLocaleString('es-AR')} m</span></div>
-            <div class="avance-total" style="margin-top:6px;font-size:11px;"><span>Avance Total Tramo 2</span><span class="val">${tramo2Pct}%</span></div>
+          <div class="fo-etapa-box">
+            <div class="fo-etapa-label">${OB377.etapa2.label}</div>
+            <table class="tbl-stats">
+              <thead><tr><th>Actividad</th><th>Ejecutado</th><th>Total</th><th>%</th></tr></thead>
+              <tbody>
+                <tr><td>Pre-tapada</td><td class="num">${e2.pretapada.toLocaleString('es-AR')} m</td><td class="num">${e2.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e2.pretapada,e2.total)}%</td></tr>
+                <tr><td>Tendido FO</td><td class="num">${e2.tendido.toLocaleString('es-AR')} m</td><td class="num">${e2.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e2.tendido,e2.total)}%</td></tr>
+                <tr><td>1/2 Tapada + Malla</td><td class="num">${e2.mediaTapada.toLocaleString('es-AR')} m</td><td class="num">${e2.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e2.mediaTapada,e2.total)}%</td></tr>
+                <tr><td>Tapada Final</td><td class="num">${e2.tapadaFinal.toLocaleString('es-AR')} m</td><td class="num">${e2.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e2.tapadaFinal,e2.total)}%</td></tr>
+              </tbody>
+              <tfoot><tr class="total-row"><td colspan="3">Avance Total Tramo 2</td><td class="num">${tramo2Pct}%</td></tr></tfoot>
+            </table>
           </div>
 
-          <div class="avance-total" style="font-size:14px;background:#FFD100;color:#003087;">
+          <div class="avance-highlight">
             <span>Avance Total Montaje F.O.</span>
-            <span class="val" style="background:#003087;color:#FFD100;">${foAvanceGeneral}%</span>
-          </div>
-
-          <div style="margin-top:8px;font-size:9px;color:#475569;">
-            <b style="color:#003087;">Distribución de cámaras alcanzadas:</b>
-            <div class="camaras-list">
-              ${camarasAlcanzadas.length ? camarasAlcanzadas.map(c => `<span>${esc(c.id)} · ${esc(c.pk)}</span>`).join('') : '<span>Sin cámaras alcanzadas en el frente actual</span>'}
-            </div>
+            <span class="val">${foAvanceGeneral}%</span>
           </div>
         </div>
 
         <!-- Instrumentación -->
         <div class="stat-card">
           <h4>Instrumentación</h4>
-          <div class="stat-sub">${OB377.totalInstrumentos} instrumentos planificados</div>
-          <div class="summary-line"><b>Liberados / Precom:</b><span class="val">${instLiberados}</span></div>
-          <div class="summary-line"><b>Montados / Conexionados:</b><span class="val">${instMontados}</span></div>
-          <div class="summary-line"><b>Total cargados:</b><span class="val">${instArr.length}</span></div>
-          <div class="avance-total"><span>Avance</span><span class="val">${pct(instLiberados, OB377.totalInstrumentos)}%</span></div>
+          <table class="tbl-stats">
+            <tbody>
+              <tr><td>Liberados / Precom</td><td class="num">${instLiberados} / ${OB377.totalInstrumentos}</td></tr>
+              <tr><td>Montados / Conexionados</td><td class="num">${instMontados}</td></tr>
+              <tr><td>Total cargados en parte</td><td class="num">${instArr.length}</td></tr>
+            </tbody>
+            <tfoot><tr class="total-row"><td>Avance</td><td class="num">${pct(instLiberados, OB377.totalInstrumentos)}%</td></tr></tfoot>
+          </table>
         </div>
 
         <!-- Pendientes -->
         <div class="stat-card">
           <h4>Pendientes Hand Over</h4>
-          <div class="stat-sub">Acciones abiertas / cerradas</div>
-          ${(ho.pendientes && ho.pendientes.length) ? `<div class="pend-list">
-            ${ho.pendientes.slice(0, 8).map(x => {
-              if (typeof x === 'string') return `<div class="pend-item">${esc(x)}</div>`;
-              const crit = /Cr[ií]tico/i.test(x.criticidad || '') ? 'crit' : '';
-              const cerr = x.estado === 'Cerrado' ? 'cerrado' : '';
-              return `<div class="pend-item ${crit} ${cerr}"><b>${esc(x.criticidad || 'Medio')}</b> — ${esc(x.desc || '')}${x.responsable ? ' · <b>' + esc(x.responsable) + '</b>' : ''}</div>`;
-            }).join('')}
-          </div>` : '<div class="no-data">Sin pendientes registrados.</div>'}
+          ${(ho.pendientes && ho.pendientes.length) ? `<table class="tbl-stats">
+            <thead><tr><th>Criticidad</th><th>Descripción</th><th>Responsable</th></tr></thead>
+            <tbody>
+              ${ho.pendientes.slice(0, 10).map(x => {
+                if (typeof x === 'string') return `<tr><td>—</td><td colspan="2">${esc(x)}</td></tr>`;
+                const cerr = x.estado === 'Cerrado';
+                return `<tr class="${cerr ? 'row-cerrado' : ''}">
+                  <td><span class="badge ${/Cr[ií]tico/i.test(x.criticidad||'')?'danger':/Alto/i.test(x.criticidad||'')?'warn':'muted'}">${esc(x.criticidad||'Medio')}</span></td>
+                  <td${cerr?' style="text-decoration:line-through;opacity:.6;"':''}>${esc(x.desc||'')}</td>
+                  <td class="loc-id">${esc(x.responsable||'—')}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>` : '<p class="no-data">Sin pendientes registrados.</p>'}
         </div>
       </div>
 
