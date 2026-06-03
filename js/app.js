@@ -470,30 +470,57 @@
     const pct = (v, total) => total > 0 ? Math.min(100, Math.round((v / total) * 100)) : 0;
     const foAvanceGeneral = pct(acum.pretapada, OB377.totalMetros);
 
-    // PAT: contar liberadas / con datos
+    // PAT: contar liberadas / con datos — match flexible por locación
     const patArr = Array.isArray(pat.mediciones) ? pat.mediciones : (Array.isArray(p.pat) ? p.pat : []);
+    const matchPatLoc = (x, L) => {
+      if (!x) return false;
+      const loc = (x.locacion || x.id || '').toUpperCase();
+      if (loc === L.id.toUpperCase()) return true;
+      // Buscar por número: "604" en "SCRL-604"
+      const num = L.id.replace(/[^\d]/g, '');
+      if (num && loc.includes(num)) return true;
+      // Buscar con variantes comunes (SCRC vs SCRR, etc.)
+      if (L.id.startsWith('SCRR') && loc.includes('SCRC')) return loc.includes(num);
+      if (L.id.startsWith('SCRL') && loc.includes('SCRL')) return true;
+      return false;
+    };
     const patPorLoc = OB377.locaciones.map(L => {
-      const m = patArr.find(x => x && (x.locacion === L.id || x.id === L.id));
-      const r = m && m.ohm != null ? parseFloat(m.ohm) : (m && m.resistencia != null ? parseFloat(m.resistencia) : null);
+      const m = patArr.find(x => matchPatLoc(x, L));
+      const r = m && m.ohm != null && m.ohm !== '' ? parseFloat(m.ohm) : (m && m.resistencia != null ? parseFloat(m.resistencia) : null);
       const estado = m && m.estado ? m.estado : 'No iniciada';
       const obs = (m && m.obs) || '';
-      const liberada = estado === 'Liberada' || (r != null && r > 0 && r <= OB377.patLimite && /Liberad|En proceso/i.test(estado));
-      const fueraNorma = r != null && r > OB377.patLimite;
-      const pctLoc = r == null ? 0 : (estado === 'Liberada' ? 100 : 50);
-      return { ...L, resistencia: r, estado, obs, liberada, fueraNorma, pctLoc };
+      const liberada = estado === 'Liberada';
+      const fueraNorma = r != null && !isNaN(r) && r > OB377.patLimite;
+      const pctLoc = r == null || isNaN(r) ? 0 : (estado === 'Liberada' ? 100 : (r <= OB377.patLimite ? 50 : 10));
+      return { ...L, resistencia: (r != null && !isNaN(r)) ? r : null, estado, obs, liberada, fueraNorma, pctLoc };
     });
     const patPctTotal = Math.round(patPorLoc.reduce((s, x) => s + x.pctLoc, 0) / OB377.locaciones.length);
     const patLiberadas = patPorLoc.filter(x => x.estado === 'Liberada').length;
 
     // Canalizaciones E&I por locación (a partir de elec.tareas / canalizaciones)
     const elecTareas = Array.isArray(elec.tareas) ? elec.tareas : [];
+    // Match flexible: busca el ID de locación en locacion, desc o tarea del parte
+    const matchLoc = (t, L) => {
+      if (!t) return false;
+      const txt = ((t.locacion || '') + ' ' + (t.desc || '') + ' ' + (t.tarea || '')).toUpperCase();
+      // Matchea "SCRL-604", "SCRL604", "604", etc.
+      if (txt.includes(L.id.toUpperCase())) return true;
+      // Matchea por número corto: "604", "640", etc.
+      const num = L.id.replace(/[^\d]/g, '');
+      if (num && txt.includes(num)) return true;
+      return false;
+    };
     const canalPorLoc = OB377.locaciones.map(L => {
-      const tareasLoc = elecTareas.filter(t => t && (t.locacion === L.id || (t.desc || '').includes(L.id)));
+      const tareasLoc = elecTareas.filter(t => matchLoc(t, L));
       const av = tareasLoc.length ? Math.round(tareasLoc.reduce((s, t) => s + (parseInt(t.avance, 10) || 0), 0) / tareasLoc.length) : 0;
       const desc = tareasLoc.map(t => t.desc || t.tarea || '').filter(Boolean).join(' · ') || 'Sin tareas registradas';
       return { ...L, avance: av, desc };
     });
-    const canalAvanceGeneral = Math.round(canalPorLoc.reduce((s, x) => s + x.avance, 0) / OB377.locaciones.length);
+    // Si ninguna tarea matcheó locaciones, usamos promedio directo de las tareas
+    const anyMatch = canalPorLoc.some(x => x.avance > 0);
+    const canalAvanceGeneral = anyMatch
+      ? Math.round(canalPorLoc.reduce((s, x) => s + x.avance, 0) / OB377.locaciones.length)
+      : (elecTareas.length ? Math.round(elecTareas.reduce((s, t) => s + (parseInt(t.avance, 10) || 0), 0) / elecTareas.length) : 0);
 
     // Protección Catódica
     const cupros = Array.isArray(pcA.cupros) ? pcA.cupros : [];
@@ -506,7 +533,15 @@
     const instMontados = instArr.filter(x => /Montad|Conex|Liberad|Precom/i.test(x.estado || '')).length;
 
     // FO por etapa (a partir de tramos cargados o aproximación por PK del frente)
-    const frenteActual = Math.max(OB377.ductoInicio, ...tramos.map(t => parsePK(t.pkHasta || t.pkFin) || 0), parsePK(fo.pkFinDia) || 0);
+    // pkFinDia puede ser número directo (metros) o string "PK 71+000"
+    const pkFinVal = typeof fo.pkFinDia === 'number' ? fo.pkFinDia : (parsePK(fo.pkFinDia) || 0);
+    const frenteActual = Math.max(
+      OB377.ductoInicio,
+      ...tramos.map(t => parsePK(t.pkHasta || t.pkFin || t.camHasta) || 0),
+      pkFinVal,
+      // Si hay acumulado de pre-tapada, estimar frente como inicio + acumulado
+      acum.pretapada > 0 ? OB377.ductoInicio + acum.pretapada : 0
+    );
     const calcEtapa = (e) => {
       const enRango = (m) => Math.max(0, Math.min(m, e.fin) - Math.max(0, e.inicio));
       // Aproximación: distribuir acumulados proporcionalmente al avance del frente en cada etapa
@@ -580,9 +615,10 @@
       .specialty-body{padding:6px 10px;font-size:10px;}
       .specialty-body .no-data{color:#94a3b8;font-style:italic;}
       .fo-grid{display:grid;grid-template-columns:1fr;gap:3px;font-size:10px;}
-      .fo-row{display:grid;grid-template-columns:130px 1fr 90px;gap:6px;padding:3px 0;border-bottom:1px dotted #e5e7eb;align-items:center;}
-      .fo-row b{color:#003087;font-size:9px;text-transform:uppercase;}
-      .fo-row .acum{text-align:right;font-family:'JetBrains Mono',monospace;font-weight:600;color:#00884A;font-size:10px;}
+      .fo-row{display:flex;flex-wrap:wrap;gap:2px 8px;padding:4px 0;border-bottom:1px dotted #e5e7eb;align-items:baseline;}
+      .fo-row b{color:#003087;font-size:9px;text-transform:uppercase;min-width:110px;flex-shrink:0;}
+      .fo-row .fo-detail{flex:1;min-width:100px;font-size:10px;color:#475569;word-break:break-word;}
+      .fo-row .acum{margin-left:auto;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:600;color:#00884A;font-size:10px;white-space:nowrap;flex-shrink:0;}
       .fo-row .acum.zero{color:#94a3b8;}
       .footer-row{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px;}
       .dato-relevante{border:1px solid #d1d9e6;border-radius:4px;padding:8px;background:#FFFEF0;}
@@ -613,14 +649,16 @@
       .pat-row .obs{color:#475569;font-size:9px;}
       .badge{display:inline-block;padding:2px 7px;border-radius:8px;font-size:8px;font-weight:700;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px;}
       .badge.ok{background:#d1fae5;color:#00884A;} .badge.warn{background:#fef3c7;color:#D97706;} .badge.danger{background:#fee2e2;color:#CC1F1F;} .badge.muted{background:#e5e7eb;color:#475569;}
-      .ducto-bar{position:relative;height:36px;background:linear-gradient(90deg,#E5E7EB,#E5E7EB);border-radius:18px;margin:14px 0 22px;overflow:visible;}
+      .ducto-bar{position:relative;height:36px;background:linear-gradient(90deg,#E5E7EB,#E5E7EB);border-radius:18px;margin:14px 0 50px;overflow:visible;}
       .ducto-progress{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,#22d3ee,#003087);border-radius:18px;transition:width .3s;}
-      .ducto-loc{position:absolute;top:-2px;width:14px;height:40px;background:#FFD100;border:2px solid #003087;border-radius:3px;transform:translateX(-50%);}
-      .ducto-loc::after{content:attr(data-id);position:absolute;top:42px;left:50%;transform:translateX(-50%) rotate(-25deg);font-size:8px;font-weight:700;color:#003087;white-space:nowrap;font-family:'JetBrains Mono',monospace;transform-origin:left;}
+      .ducto-loc{position:absolute;top:-2px;width:12px;height:40px;background:#FFD100;border:2px solid #003087;border-radius:3px;transform:translateX(-50%);}
+      .ducto-loc::after{content:attr(data-label);position:absolute;top:42px;left:50%;transform:translateX(-50%) rotate(-35deg);font-size:7px;font-weight:700;color:#003087;white-space:nowrap;font-family:'JetBrains Mono',monospace;transform-origin:top left;}
       .ducto-marker-frente{position:absolute;top:-8px;width:0;height:52px;border-left:3px dashed #CC1F1F;transform:translateX(-50%);}
       .ducto-marker-frente::after{content:'◀ FRENTE ' attr(data-pk);position:absolute;top:-12px;left:6px;font-size:8px;font-weight:700;color:#CC1F1F;white-space:nowrap;background:#fff;padding:1px 4px;border-radius:2px;}
-      .fo-etapa-chart{display:grid;grid-template-columns:120px 1fr 60px;gap:6px;align-items:center;padding:3px 0;font-size:10px;}
-      .fo-etapa-chart b{color:#003087;font-size:9px;text-transform:uppercase;}
+      .fo-etapa-chart{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:center;padding:4px 0;font-size:10px;}
+      .fo-etapa-chart b{color:#003087;font-size:9px;text-transform:uppercase;min-width:100px;flex-shrink:0;}
+      .fo-etapa-chart .bar{flex:1;min-width:80px;}
+      .fo-etapa-chart .val{font-family:'JetBrains Mono',monospace;font-weight:700;text-align:right;white-space:nowrap;min-width:50px;flex-shrink:0;}
       .camaras-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;}
       .camaras-list span{background:#F4F6FA;border:1px solid #d1d9e6;border-radius:3px;padding:2px 6px;font-size:8px;color:#003087;font-family:'JetBrains Mono',monospace;}
       .photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px;}
@@ -719,12 +757,12 @@
         <div class="specialty-header"><h3>🔆 Fibra Óptica</h3><div class="header-meta">Avance general: <b style="color:#00884A;font-size:11px;">${foAvanceGeneral}%</b></div></div>
         <div class="specialty-body">
           <div class="fo-grid">
-            <div class="fo-row"><b>Pre-tapada FO</b><span>${tramosE1.length || tramosE2.length ? [...tramosE1, ...tramosE2].filter(t => /pre.?tapad/i.test(t.actividad || '')).map(tramoLine).join(' · ') || 'Sin tareas hoy' : (fo.preTapadaHoy ? fo.preTapadaHoy + ' m hoy' : 'Sin tareas hoy')}</span><span class="acum ${acum.pretapada === 0 ? 'zero' : ''}">${acum.pretapada.toLocaleString('es-AR')} mts</span></div>
-            <div class="fo-row"><b>Tendido FO</b><span>${tramosE1.concat(tramosE2).filter(t => /tendid/i.test(t.actividad || '')).map(tramoLine).join(' · ') || (fo.tendidoHoy ? fo.tendidoHoy + ' m hoy' : 'Sin tareas hoy')}</span><span class="acum ${acum.tendido === 0 ? 'zero' : ''}">${acum.tendido.toLocaleString('es-AR')} mts</span></div>
-            <div class="fo-row"><b>Nivelación</b><span>${fo.nivelacionHoy ? fo.nivelacionHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.nivelacion === 0 ? 'zero' : ''}">${acum.nivelacion.toLocaleString('es-AR')} mts</span></div>
-            <div class="fo-row"><b>Media Tapada + Malla</b><span>${fo.mediaTapadaHoy ? fo.mediaTapadaHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.mediaTapada === 0 ? 'zero' : ''}">${acum.mediaTapada.toLocaleString('es-AR')} mts</span></div>
-            <div class="fo-row"><b>Tapada Final / Coronamiento</b><span>${fo.tapadaFinalHoy ? fo.tapadaFinalHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.tapadaFinal === 0 ? 'zero' : ''}">${acum.tapadaFinal.toLocaleString('es-AR')} mts</span></div>
-            <div class="fo-row"><b>OTROS</b><span>${esc(fo.observacion || '—')}</span><span class="acum">${fo.empalmes || 0} emp · ${fo.bobinas || 0} bob</span></div>
+            <div class="fo-row"><b>Pre-tapada FO</b><span class="fo-detail">${fo.preTapadaHoy ? fo.preTapadaHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.pretapada === 0 ? 'zero' : ''}">${acum.pretapada.toLocaleString('es-AR')} mts</span></div>
+            <div class="fo-row"><b>Tendido FO</b><span class="fo-detail">${fo.tendidoHoy ? fo.tendidoHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.tendido === 0 ? 'zero' : ''}">${acum.tendido.toLocaleString('es-AR')} mts</span></div>
+            <div class="fo-row"><b>Nivelación</b><span class="fo-detail">${fo.nivelacionHoy ? fo.nivelacionHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.nivelacion === 0 ? 'zero' : ''}">${acum.nivelacion.toLocaleString('es-AR')} mts</span></div>
+            <div class="fo-row"><b>Media Tapada + Malla</b><span class="fo-detail">${fo.mediaTapadaHoy ? fo.mediaTapadaHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.mediaTapada === 0 ? 'zero' : ''}">${acum.mediaTapada.toLocaleString('es-AR')} mts</span></div>
+            <div class="fo-row"><b>Tapada Final</b><span class="fo-detail">${fo.tapadaFinalHoy ? fo.tapadaFinalHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.tapadaFinal === 0 ? 'zero' : ''}">${acum.tapadaFinal.toLocaleString('es-AR')} mts</span></div>
+            <div class="fo-row"><b>OTROS</b><span class="fo-detail">${esc(fo.observacion || '—')}</span><span class="acum">${fo.empalmes || 0} emp · ${fo.bobinas || 0} bob</span></div>
           </div>
         </div>
       </div>
@@ -771,7 +809,7 @@
         <div class="ducto-progress" style="width:${Math.min(100, Math.round(((frenteActual - OB377.ductoInicio) / (OB377.ductoFin - OB377.ductoInicio)) * 100))}%"></div>
         ${OB377.locaciones.map(L => {
           const pos = ((L.pkMetros - OB377.ductoInicio) / (OB377.ductoFin - OB377.ductoInicio)) * 100;
-          return `<div class="ducto-loc" style="left:${pos}%" data-id="${L.id} ${L.pk}"></div>`;
+          return `<div class="ducto-loc" style="left:${pos}%" data-label="${L.id}"></div>`;
         }).join('')}
         ${frenteActual > OB377.ductoInicio ? `<div class="ducto-marker-frente" style="left:${Math.min(100, ((frenteActual - OB377.ductoInicio) / (OB377.ductoFin - OB377.ductoInicio)) * 100)}%" data-pk="${fmtPK(frenteActual)}"></div>` : ''}
       </div>
@@ -781,9 +819,13 @@
         <div class="stat-card">
           <h4>Canalizaciones E&I</h4>
           <div class="stat-sub">Estado de canalización por locación</div>
-          ${canalPorLoc.map(barLoc).join('')}
+          ${anyMatch
+            ? canalPorLoc.map(barLoc).join('')
+            : elecTareas.map(t => `<div class="locbar"><div class="locbar-label">${esc(t.locacion || t.desc || '—')}</div>${bar(parseInt(t.avance,10)||0, (parseInt(t.avance,10)||0)>=80?'#00884A':(parseInt(t.avance,10)||0)>=30?'#D97706':'#CC1F1F')}</div>`).join('')}
           <div class="avance-total"><span>Avance general</span><span class="val">${canalAvanceGeneral}%</span></div>
-          ${canalPorLoc.map(L => `<div class="summary-line"><b>${esc(L.id)}:</b><span>${esc(L.desc.slice(0, 60))}</span><span class="val">${L.avance}%</span></div>`).join('')}
+          ${anyMatch
+            ? canalPorLoc.map(L => `<div class="summary-line"><b>${esc(L.id)}:</b><span>${esc(L.desc.slice(0, 80))}</span><span class="val">${L.avance}%</span></div>`).join('')
+            : elecTareas.map(t => `<div class="summary-line"><b>${esc(t.locacion || '—')}:</b><span>${esc((t.desc||t.tarea||'').slice(0,80))}</span><span class="val">${t.avance||0}%</span></div>`).join('')}
         </div>
 
         <!-- Protección Catódica + PAT -->
@@ -812,18 +854,18 @@
 
           <div style="border:1px solid #d1d9e6;border-radius:3px;padding:6px;margin-bottom:8px;background:#F4F6FA;">
             <b style="color:#003087;font-size:10px;">${OB377.etapa1.label}</b>
-            <div class="fo-etapa-chart"><b>Pre-tapada ducto</b>${bar(pct(e1.pretapada, e1.total), '#22d3ee')}<span class="val" style="font-family:JetBrains Mono,monospace;font-weight:700;text-align:right;">${e1.pretapada.toLocaleString('es-AR')} m</span></div>
-            <div class="fo-etapa-chart"><b>Tendido FO</b>${bar(pct(e1.tendido, e1.total), '#a78bfa')}<span class="val" style="font-family:JetBrains Mono,monospace;font-weight:700;text-align:right;">${e1.tendido.toLocaleString('es-AR')} m</span></div>
-            <div class="fo-etapa-chart"><b>Tapada FO</b>${bar(pct(e1.tapadaFinal, e1.total), '#fb923c')}<span class="val" style="font-family:JetBrains Mono,monospace;font-weight:700;text-align:right;">${e1.tapadaFinal.toLocaleString('es-AR')} m</span></div>
+            <div class="fo-etapa-chart"><b>Pre-tapada ducto</b>${bar(pct(e1.pretapada, e1.total), '#22d3ee')}<span class="val" >${e1.pretapada.toLocaleString('es-AR')} m</span></div>
+            <div class="fo-etapa-chart"><b>Tendido FO</b>${bar(pct(e1.tendido, e1.total), '#a78bfa')}<span class="val" >${e1.tendido.toLocaleString('es-AR')} m</span></div>
+            <div class="fo-etapa-chart"><b>Tapada FO</b>${bar(pct(e1.tapadaFinal, e1.total), '#fb923c')}<span class="val" >${e1.tapadaFinal.toLocaleString('es-AR')} m</span></div>
             <div class="avance-total" style="margin-top:6px;font-size:11px;"><span>Avance Total Tramo 1</span><span class="val">${tramo1Pct}%</span></div>
           </div>
 
           <div style="border:1px solid #d1d9e6;border-radius:3px;padding:6px;margin-bottom:8px;background:#F4F6FA;">
             <b style="color:#003087;font-size:10px;">${OB377.etapa2.label}</b>
-            <div class="fo-etapa-chart"><b>Pre-tapada</b>${bar(pct(e2.pretapada, e2.total), '#22d3ee')}<span class="val" style="font-family:JetBrains Mono,monospace;font-weight:700;text-align:right;">${e2.pretapada.toLocaleString('es-AR')} m</span></div>
-            <div class="fo-etapa-chart"><b>Tendido FO</b>${bar(pct(e2.tendido, e2.total), '#a78bfa')}<span class="val" style="font-family:JetBrains Mono,monospace;font-weight:700;text-align:right;">${e2.tendido.toLocaleString('es-AR')} m</span></div>
-            <div class="fo-etapa-chart"><b>1/2 Tapada + Malla</b>${bar(pct(e2.mediaTapada, e2.total), '#fbbf24')}<span class="val" style="font-family:JetBrains Mono,monospace;font-weight:700;text-align:right;">${e2.mediaTapada.toLocaleString('es-AR')} m</span></div>
-            <div class="fo-etapa-chart"><b>Tapada Final</b>${bar(pct(e2.tapadaFinal, e2.total), '#fb923c')}<span class="val" style="font-family:JetBrains Mono,monospace;font-weight:700;text-align:right;">${e2.tapadaFinal.toLocaleString('es-AR')} m</span></div>
+            <div class="fo-etapa-chart"><b>Pre-tapada</b>${bar(pct(e2.pretapada, e2.total), '#22d3ee')}<span class="val" >${e2.pretapada.toLocaleString('es-AR')} m</span></div>
+            <div class="fo-etapa-chart"><b>Tendido FO</b>${bar(pct(e2.tendido, e2.total), '#a78bfa')}<span class="val" >${e2.tendido.toLocaleString('es-AR')} m</span></div>
+            <div class="fo-etapa-chart"><b>1/2 Tapada + Malla</b>${bar(pct(e2.mediaTapada, e2.total), '#fbbf24')}<span class="val" >${e2.mediaTapada.toLocaleString('es-AR')} m</span></div>
+            <div class="fo-etapa-chart"><b>Tapada Final</b>${bar(pct(e2.tapadaFinal, e2.total), '#fb923c')}<span class="val" >${e2.tapadaFinal.toLocaleString('es-AR')} m</span></div>
             <div class="avance-total" style="margin-top:6px;font-size:11px;"><span>Avance Total Tramo 2</span><span class="val">${tramo2Pct}%</span></div>
           </div>
 
