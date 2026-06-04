@@ -1,5 +1,5 @@
-/* ============================================================
-   GTL Inspector — Bootstrap + Router + UI helpers
+﻿/* ============================================================
+   GTL Inspector â€” Bootstrap + Router + UI helpers
    ============================================================ */
 (function (global) {
   "use strict";
@@ -107,7 +107,7 @@
     const cfg = Store.getConfig();
 
     if (!cfg.onboarded) {
-      // Forzar onboarding hasta que esté listo
+      // Forzar onboarding hasta que estÃ© listo
       global.GTL.Views.Setup.render(view);
       setActiveTab(null);
       return;
@@ -162,7 +162,7 @@
         lbl.textContent = `${p.length} pend.`;
         el.classList.add("offline");
       } else if (p.length > 0) {
-        lbl.textContent = `Offline · ${p.length}`;
+        lbl.textContent = `Offline Â· ${p.length}`;
       }
     }).catch(() => {});
   }
@@ -175,9 +175,9 @@
     if (!obra) {
       view.innerHTML = `
         <div class="empty">
-          <div class="ic">🏗</div>
+          <div class="ic">ðŸ—</div>
           <h3>No hay obras configuradas</h3>
-          <p>Cargá tu primera obra para arrancar a usar la app.</p>
+          <p>CargÃ¡ tu primera obra para arrancar a usar la app.</p>
           <button class="btn btn-primary" id="goSetup">Configurar obra</button>
         </div>`;
       view.querySelector("#goSetup").onclick = () => navigate("/setup-obra");
@@ -192,7 +192,7 @@
       <section class="home-hero">
         <span class="obra-tag">Obra activa</span>
         <h2>${esc(obra.nombre)}</h2>
-        <div class="text-muted" style="color: rgba(255,255,255,0.85);">${esc(obra.contratista || "")} · ${esc(obra.cliente || "YPF")} · N° ${esc(obra.numero || "—")}</div>
+        <div class="text-muted" style="color: rgba(255,255,255,0.85);">${esc(obra.contratista || "")} Â· ${esc(obra.cliente || "YPF")} Â· NÂ° ${esc(obra.numero || "â€”")}</div>
         <div class="meta">
           <div><span class="text-muted" style="color:rgba(255,255,255,0.7);">PK Inicio</span><b>${formatPK(obra.pkInicio)}</b></div>
           <div><span class="text-muted" style="color:rgba(255,255,255,0.7);">PK Fin</span><b>${formatPK(obra.pkFin)}</b></div>
@@ -200,7 +200,7 @@
           <div><span class="text-muted" style="color:rgba(255,255,255,0.7);">Locaciones</span><b>${(obra.locaciones||[]).length}</b></div>
         </div>
         <div class="home-cta">
-          <button class="btn btn-accent btn-lg btn-block" id="ctaCargar">＋ Cargar parte de hoy</button>
+          <button class="btn btn-accent btn-lg btn-block" id="ctaCargar">ï¼‹ Cargar parte de hoy</button>
         </div>
       </section>
 
@@ -210,22 +210,22 @@
 
       <div class="home-quick">
         <button class="qcard" data-route="/dashboard">
-          <span class="ic">📊</span>
+          <span class="ic">ðŸ“Š</span>
           <span class="lbl">Dashboard</span>
           <span class="val">KPIs</span>
         </button>
         <button class="qcard" data-route="/history">
-          <span class="ic">📂</span>
-          <span class="lbl">Histórico</span>
-          <span class="val" id="hisCount">—</span>
+          <span class="ic">ðŸ“‚</span>
+          <span class="lbl">HistÃ³rico</span>
+          <span class="val" id="hisCount">â€”</span>
         </button>
         <button class="qcard" data-route="/more">
-          <span class="ic">⚙</span>
-          <span class="lbl">Configuración</span>
-          <span class="val">${esc(cfg.inspector.nombre.split(" ")[0] || "—")}</span>
+          <span class="ic">âš™</span>
+          <span class="lbl">ConfiguraciÃ³n</span>
+          <span class="val">${esc(cfg.inspector.nombre.split(" ")[0] || "â€”")}</span>
         </button>
         <button class="qcard" id="qcSync">
-          <span class="ic">🔄</span>
+          <span class="ic">ðŸ”„</span>
           <span class="lbl">Sincronizar</span>
           <span class="val" id="pendCount">0</span>
         </button>
@@ -242,8 +242,8 @@
     view.querySelector("#ctaCargar").onclick = () => navigate("/form");
     view.querySelectorAll(".qcard[data-route]").forEach(b => b.onclick = () => navigate(b.dataset.route));
     view.querySelector("#qcSync").onclick = () => Sync.drainQueue().then(r => {
-      if (r.skipped) toast("Sin conexión, se reintentará", "warn");
-      else toast(`Sincronizados: ${r.sent} · Errores: ${r.failed}`, r.failed ? "warn" : "ok");
+      if (r.skipped) toast("Sin conexiÃ³n, se reintentarÃ¡", "warn");
+      else toast(`Sincronizados: ${r.sent} Â· Errores: ${r.failed}`, r.failed ? "warn" : "ok");
       refreshConnUI();
     });
 
@@ -252,7 +252,7 @@
       const el = view.querySelector("#pendCount");
       if (el) el.textContent = p.length;
     });
-    // Histórico count
+    // HistÃ³rico count
     Store.listPartesLocal(obra.id).then(p => {
       const el = view.querySelector("#hisCount");
       if (el) el.textContent = p.length;
@@ -265,51 +265,51 @@
       const al = view.querySelector("#alertsHome");
       if (!al) return;
       if (!hoy) {
-        al.innerHTML = `<div class="banner warn">⚠ Aún no cargaste el parte de hoy (${formatDate(today)}).</div>`;
+        al.innerHTML = `<div class="banner warn">âš  AÃºn no cargaste el parte de hoy (${formatDate(today)}).</div>`;
       } else {
-        al.innerHTML = `<div class="banner ok">✓ Parte de hoy cargado correctamente · ${esc(hoy.turno || "")} · ${esc(hoy.condiciones && hoy.condiciones.clima || hoy.clima || "")}</div>`;
+        al.innerHTML = `<div class="banner ok">âœ“ Parte de hoy cargado correctamente Â· ${esc(hoy.turno || "")} Â· ${esc(hoy.condiciones && hoy.condiciones.clima || hoy.clima || "")}</div>`;
       }
     });
   }
 
-  /* ---------- Más / menú ---------- */
+  /* ---------- MÃ¡s / menÃº ---------- */
   function renderMore(view) {
     view.innerHTML = `
-      <h2>Más</h2>
+      <h2>MÃ¡s</h2>
       <div class="settings-list">
         <button class="item" data-route="/history">
-          <span class="ic">📂</span>
-          <span class="text"><b>Histórico de partes</b><small>Ver y editar partes anteriores</small></span>
-          <span>›</span>
+          <span class="ic">ðŸ“‚</span>
+          <span class="text"><b>HistÃ³rico de partes</b><small>Ver y editar partes anteriores</small></span>
+          <span>â€º</span>
         </button>
         <button class="item" data-route="/settings">
-          <span class="ic">⚙</span>
-          <span class="text"><b>Configuración</b><small>Inspector, obras, conexión, backups</small></span>
-          <span>›</span>
+          <span class="ic">âš™</span>
+          <span class="text"><b>ConfiguraciÃ³n</b><small>Inspector, obras, conexiÃ³n, backups</small></span>
+          <span>â€º</span>
         </button>
         <button class="item" id="forceSync">
-          <span class="ic">🔄</span>
-          <span class="text"><b>Sincronizar ahora</b><small>Forzar envío de partes pendientes</small></span>
-          <span>›</span>
+          <span class="ic">ðŸ”„</span>
+          <span class="text"><b>Sincronizar ahora</b><small>Forzar envÃ­o de partes pendientes</small></span>
+          <span>â€º</span>
         </button>
         <button class="item" id="aboutBtn">
-          <span class="ic">ℹ</span>
-          <span class="text"><b>Acerca de</b><small>Versión, créditos</small></span>
-          <span>›</span>
+          <span class="ic">â„¹</span>
+          <span class="text"><b>Acerca de</b><small>VersiÃ³n, crÃ©ditos</small></span>
+          <span>â€º</span>
         </button>
       </div>
     `;
     view.querySelectorAll(".item[data-route]").forEach(b => b.onclick = () => navigate(b.dataset.route));
     view.querySelector("#forceSync").onclick = () => Sync.drainQueue().then(r => {
-      if (r.skipped) toast("Sin conexión", "warn");
-      else toast(`✓ ${r.sent} enviados, ${r.failed} con error`, r.failed ? "warn" : "ok");
+      if (r.skipped) toast("Sin conexiÃ³n", "warn");
+      else toast(`âœ“ ${r.sent} enviados, ${r.failed} con error`, r.failed ? "warn" : "ok");
     });
     view.querySelector("#aboutBtn").onclick = () => modal({
       title: "GTL Inspector",
-      content: `<p><b>Versión:</b> 1.0.0</p>
+      content: `<p><b>VersiÃ³n:</b> 1.0.0</p>
                 <p><b>Empresa:</b> GRUPO TERGO LAF (GTL)</p>
-                <p><b>Cliente:</b> YPF Upstream Neuquén</p>
-                <p class="text-muted">Sistema de inspección de Electricidad, Instrumentación y Control para obras en Vaca Muerta.</p>`,
+                <p><b>Cliente:</b> YPF Upstream NeuquÃ©n</p>
+                <p class="text-muted">Sistema de inspecciÃ³n de Electricidad, InstrumentaciÃ³n y Control para obras en Vaca Muerta.</p>`,
       actions: [{ label: "Cerrar", kind: "primary" }]
     });
   }
@@ -324,19 +324,19 @@
       .replace(/'/g, "&#39;");
   }
   function formatPK(meters) {
-    if (meters == null || isNaN(meters)) return "—";
+    if (meters == null || isNaN(meters)) return "â€”";
     const m = Number(meters);
     const km = Math.floor(m / 1000);
     const rest = m % 1000;
     return `${km}+${String(rest).padStart(3, "0")}`;
   }
   function formatDate(iso) {
-    if (!iso) return "—";
+    if (!iso) return "â€”";
     const d = new Date(iso + (iso.length === 10 ? "T00:00:00" : ""));
     return d.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
   }
   function formatDateTime(iso) {
-    if (!iso) return "—";
+    if (!iso) return "â€”";
     const d = new Date(iso);
     return d.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" })
       + " " + d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
@@ -349,7 +349,7 @@
     if (navigator.vibrate) try { navigator.vibrate(pattern); } catch (e) {}
   }
 
-  /* ---------- Tabs de obras (cambio rápido) ---------- */
+  /* ---------- Tabs de obras (cambio rÃ¡pido) ---------- */
   function renderObraTabs(container, opts) {
     if (!container) return;
     opts = opts || {};
@@ -368,7 +368,7 @@
             ${o.numero ? `<span class="obra-tab-num">${esc(o.numero)}</span>` : ""}
           </button>
         `).join("")}
-        <button class="obra-tab obra-tab-add" id="obraTabAdd" title="Agregar obra">＋</button>
+        <button class="obra-tab obra-tab-add" id="obraTabAdd" title="Agregar obra">ï¼‹</button>
       </div>
     `;
     container.querySelectorAll(".obra-tab[data-id]").forEach(t => {
@@ -384,7 +384,7 @@
   }
 
   /* =========================================================
-     OB-377 — Oleoducto 24" Loop Etapa 2.1 (config oficial)
+     OB-377 â€” Oleoducto 24" Loop Etapa 2.1 (config oficial)
      ========================================================= */
   const OB377 = {
     proyecto: 'OBRA OLEODUCTO 24" - LOOP ETAPA 2.1',
@@ -394,29 +394,29 @@
     totalMetros: 45133,
     ductoInicio: 42500,
     ductoFin: 87633,
-    etapa1: { inicio: 42500, fin: 60700, total: 18200, label: 'TRAMO 1 (PK 42+500 → 60+700)' },
-    etapa2: { inicio: 60700, fin: 87633, total: 26933, label: 'TRAMO 2 (PK 60+700 → 87+633)' },
+    etapa1: { inicio: 42500, fin: 60700, total: 18200, label: 'TRAMO 1 (PK 42+500 â†’ 60+700)' },
+    etapa2: { inicio: 60700, fin: 87633, total: 26933, label: 'TRAMO 2 (PK 60+700 â†’ 87+633)' },
     totalInstrumentos: 64,
     totalCupros: 53,
     patLimite: 2.0,
     locaciones: [
       { id: 'SCRL-604', pk: '42+500', pkMetros: 42500, tipo: 'Trampa Lanzadora' },
-      { id: 'LB-640',   pk: '55+000', pkMetros: 55000, tipo: 'Estación de Válvula' },
-      { id: 'LB-641',   pk: '66+300', pkMetros: 66300, tipo: 'Estación de Válvula' },
-      { id: 'LB-642',   pk: '70+500', pkMetros: 70500, tipo: 'Estación de Válvula' },
+      { id: 'LB-640',   pk: '55+000', pkMetros: 55000, tipo: 'EstaciÃ³n de VÃ¡lvula' },
+      { id: 'LB-641',   pk: '66+300', pkMetros: 66300, tipo: 'EstaciÃ³n de VÃ¡lvula' },
+      { id: 'LB-642',   pk: '70+500', pkMetros: 70500, tipo: 'EstaciÃ³n de VÃ¡lvula' },
       { id: 'SCRR-605', pk: '87+633', pkMetros: 87633, tipo: 'Trampa Receptora' }
     ],
     camaras: [
-      { id: 'Cámara H° FO.01', pk: 'PK 46+050' },
-      { id: 'Cámara H° FO.02', pk: 'PK 58+450' },
-      { id: 'Cámara H° FO.03', pk: 'PK 54+500' },
-      { id: 'Cámara H° FO.04', pk: 'PK 49+800' },
-      { id: 'Cámara Madera',   pk: 'PK 50+830' },
-      { id: 'Cámara Madera',   pk: 'PK 60+450' }
+      { id: 'CÃ¡mara HÂ° FO.01', pk: 'PK 46+050' },
+      { id: 'CÃ¡mara HÂ° FO.02', pk: 'PK 58+450' },
+      { id: 'CÃ¡mara HÂ° FO.03', pk: 'PK 54+500' },
+      { id: 'CÃ¡mara HÂ° FO.04', pk: 'PK 49+800' },
+      { id: 'CÃ¡mara Madera',   pk: 'PK 50+830' },
+      { id: 'CÃ¡mara Madera',   pk: 'PK 60+450' }
     ]
   };
 
-  /** Convierte "PK 42+500" / "42+500" / 42500 → 42500 (metros absolutos). */
+  /** Convierte "PK 42+500" / "42+500" / 42500 â†’ 42500 (metros absolutos). */
   function parsePK(s) {
     if (s == null) return null;
     if (typeof s === 'number') return s;
@@ -426,16 +426,16 @@
     return isNaN(n) ? null : n;
   }
 
-  /** Formatea metros → "PK 42+500" */
+  /** Formatea metros â†’ "PK 42+500" */
   function fmtPK(metros) {
-    if (metros == null || isNaN(metros)) return '—';
+    if (metros == null || isNaN(metros)) return 'â€”';
     const km = Math.floor(metros / 1000);
     const m  = Math.floor(metros % 1000);
     return `PK ${km}+${String(m).padStart(3, '0')}`;
   }
 
   /* =========================================================
-     PDF EJECUTIVO — Formato Hugo Farias (2 páginas + fotos)
+     PDF â€” PARTE DIARIO (formato limpio, 1 pÃ¡gina + stats)
      ========================================================= */
   function printParteEjecutivo(p) {
     if (!p) return;
@@ -446,494 +446,239 @@
       return v != null ? v : def;
     };
 
-    // ----- Normalizar datos -----
+    // --- Normalizar datos ---
     const cond = p.condiciones || { clima: p.clima, alertaYpf: p.alertaYpf, temperatura: p.temperatura, visibilidad: p.visibilidad };
-    const hse  = p.hse || { sinNovedad: p.hseSinNovedad !== false, detalle: p.hseDetalle, criticidad: p.hseCriticidad };
-    const fo   = (p.avances && p.avances.fo)   || {};
-    const pat  = (p.avances && p.avances.pat)  || {};
-    const pcA  = (p.avances && p.avances.pc)   || {};
+    const hse  = p.hse || { sinNovedad: p.hseSinNovedad !== false, detalle: p.hseDetalle };
+    const fo   = (p.avances && p.avances.fo) || {};
+    const pat  = (p.avances && p.avances.pat) || {};
+    const pcA  = (p.avances && p.avances.pc) || {};
     const elec = (p.avances && p.avances.elec) || {};
     const inst = (p.avances && p.avances.inst) || {};
     const ho   = p.handover || { pendientes: tryJson(p.pendientes, []), noConformidades: tryJson(p.noConformidades, []) };
     const ci   = p.cierre || {};
-    const tramos = Array.isArray(fo.tramos) ? fo.tramos : tryJson(p.fo_tramos_json, []);
 
-    // ----- Cálculos: avances acumulados -----
-    const acum = {
-      pretapada:    +(fo.preTapadaAcum   || 0),
-      tendido:      +(fo.tendidoAcum     || 0),
-      nivelacion:   +(fo.nivelacionAcum  || 0),
-      mediaTapada:  +(fo.mediaTapadaAcum || 0),
-      tapadaFinal:  +(fo.tapadaFinalAcum || 0),
-      mallaAdv:     +(fo.mallaAdvAcum    || fo.mediaTapadaAcum || 0)
-    };
-    const pct = (v, total) => total > 0 ? Math.min(100, Math.round((v / total) * 100)) : 0;
-    const foAvanceGeneral = pct(acum.pretapada, OB377.totalMetros);
+    // --- PAT ---
+    const patArr = Array.isArray(pat.mediciones) ? pat.mediciones : [];
+    const patRows = patArr.length ? patArr.map(m => {
+      const v = m.ohm != null && m.ohm !== '' ? parseFloat(m.ohm) : null;
+      const ok = v != null && !isNaN(v) && v <= 2;
+      return `<tr>
+        <td class="bold">${esc(m.locacion || 'â€”')}</td>
+        <td class="mono ${v == null ? 'muted' : ok ? 'ok' : 'danger'}">${v != null ? v + ' Î©' : 'S/M'}</td>
+        <td>${esc(m.estado || 'â€”')}</td>
+        <td class="obs">${esc((m.obs || '').slice(0, 50))}</td>
+      </tr>`;
+    }).join('') : '<tr><td colspan="4" class="muted">Sin mediciones PAT cargadas</td></tr>';
 
-    // PAT: contar liberadas / con datos — match flexible por locación
-    const patArr = Array.isArray(pat.mediciones) ? pat.mediciones : (Array.isArray(p.pat) ? p.pat : []);
-    const matchPatLoc = (x, L) => {
-      if (!x) return false;
-      const loc = (x.locacion || x.id || '').toUpperCase();
-      if (loc === L.id.toUpperCase()) return true;
-      // Buscar por número: "604" en "SCRL-604"
-      const num = L.id.replace(/[^\d]/g, '');
-      if (num && loc.includes(num)) return true;
-      // Buscar con variantes comunes (SCRC vs SCRR, etc.)
-      if (L.id.startsWith('SCRR') && loc.includes('SCRC')) return loc.includes(num);
-      if (L.id.startsWith('SCRL') && loc.includes('SCRL')) return true;
-      return false;
-    };
-    const patPorLoc = OB377.locaciones.map(L => {
-      const m = patArr.find(x => matchPatLoc(x, L));
-      const r = m && m.ohm != null && m.ohm !== '' ? parseFloat(m.ohm) : (m && m.resistencia != null ? parseFloat(m.resistencia) : null);
-      const estado = m && m.estado ? m.estado : 'No iniciada';
-      const obs = (m && m.obs) || '';
-      const liberada = estado === 'Liberada';
-      const fueraNorma = r != null && !isNaN(r) && r > OB377.patLimite;
-      const pctLoc = r == null || isNaN(r) ? 0 : (estado === 'Liberada' ? 100 : (r <= OB377.patLimite ? 50 : 10));
-      return { ...L, resistencia: (r != null && !isNaN(r)) ? r : null, estado, obs, liberada, fueraNorma, pctLoc };
-    });
-    const patPctTotal = Math.round(patPorLoc.reduce((s, x) => s + x.pctLoc, 0) / OB377.locaciones.length);
-    const patLiberadas = patPorLoc.filter(x => x.estado === 'Liberada').length;
-
-    // Canalizaciones E&I por locación (a partir de elec.tareas / canalizaciones)
+    // --- Canalizaciones ---
     const elecTareas = Array.isArray(elec.tareas) ? elec.tareas : [];
-    // Match flexible: busca el ID de locación en locacion, desc o tarea del parte
-    const matchLoc = (t, L) => {
-      if (!t) return false;
-      const txt = ((t.locacion || '') + ' ' + (t.desc || '') + ' ' + (t.tarea || '')).toUpperCase();
-      // Matchea "SCRL-604", "SCRL604", "604", etc.
-      if (txt.includes(L.id.toUpperCase())) return true;
-      // Matchea por número corto: "604", "640", etc.
-      const num = L.id.replace(/[^\d]/g, '');
-      if (num && txt.includes(num)) return true;
-      return false;
-    };
-    const canalPorLoc = OB377.locaciones.map(L => {
-      const tareasLoc = elecTareas.filter(t => matchLoc(t, L));
-      const av = tareasLoc.length ? Math.round(tareasLoc.reduce((s, t) => s + (parseInt(t.avance, 10) || 0), 0) / tareasLoc.length) : 0;
-      const desc = tareasLoc.map(t => t.desc || t.tarea || '').filter(Boolean).join(' · ') || 'Sin tareas registradas';
-      return { ...L, avance: av, desc };
-    });
-    // Si ninguna tarea matcheó locaciones, usamos promedio directo de las tareas
-    const anyMatch = canalPorLoc.some(x => x.avance > 0);
-    const canalAvanceGeneral = anyMatch
-      ? Math.round(canalPorLoc.reduce((s, x) => s + x.avance, 0) / OB377.locaciones.length)
-      : (elecTareas.length ? Math.round(elecTareas.reduce((s, t) => s + (parseInt(t.avance, 10) || 0), 0) / elecTareas.length) : 0);
+    const canalRows = elecTareas.length ? elecTareas.map(t =>
+      `<tr><td class="bold">${esc(t.locacion || 'â€”')}</td><td>${esc(t.desc || t.tarea || '')}</td><td class="mono">${t.avance != null ? t.avance + '%' : 'â€”'}</td><td class="obs">${esc((t.obs || '').slice(0, 40))}</td></tr>`
+    ).join('') : '<tr><td colspan="4" class="muted">Sin tareas cargadas</td></tr>';
 
-    // Protección Catódica
-    const cupros = Array.isArray(pcA.cupros) ? pcA.cupros : [];
-    const cuprosOK = cupros.filter(c => c.martillo === 'PASS' || /PASS/i.test(c.martillo || '')).length;
-    const pcPct = pct(cuprosOK, OB377.totalCupros);
+    // --- FO ---
+    const foHoy = (k) => { const v = fo[k + 'Hoy'] || fo[k + '_hoy']; return v ? v + ' m' : 'â€”'; };
+    const foAcum = (k) => { const v = +(fo[k + 'Acum'] || fo[k + '_acum'] || 0); return v > 0 ? v.toLocaleString('es-AR') + ' m' : 'â€”'; };
 
-    // Instrumentación
+    // --- InstrumentaciÃ³n ---
     const instArr = Array.isArray(inst.instrumentos) ? inst.instrumentos : [];
-    const instLiberados = instArr.filter(x => /Liberad|Precom/i.test(x.estado || '')).length;
-    const instMontados = instArr.filter(x => /Montad|Conex|Liberad|Precom/i.test(x.estado || '')).length;
 
-    // FO por etapa (a partir de tramos cargados o aproximación por PK del frente)
-    // pkFinDia puede ser número directo (metros) o string "PK 71+000"
-    const pkFinVal = typeof fo.pkFinDia === 'number' ? fo.pkFinDia : (parsePK(fo.pkFinDia) || 0);
-    const frenteActual = Math.max(
-      OB377.ductoInicio,
-      ...tramos.map(t => parsePK(t.pkHasta || t.pkFin || t.camHasta) || 0),
-      pkFinVal,
-      // Si hay acumulado de pre-tapada, estimar frente como inicio + acumulado
-      acum.pretapada > 0 ? OB377.ductoInicio + acum.pretapada : 0
-    );
-    const calcEtapa = (e) => {
-      const enRango = (m) => Math.max(0, Math.min(m, e.fin) - Math.max(0, e.inicio));
-      // Aproximación: distribuir acumulados proporcionalmente al avance del frente en cada etapa
-      const frenteEnEtapa = Math.max(0, Math.min(frenteActual, e.fin) - e.inicio);
-      const fracEtapa = Math.min(1, frenteEnEtapa / e.total);
-      return {
-        pretapada:   Math.min(e.total, Math.round(acum.pretapada   * (fracEtapa > 0 ? (frenteEnEtapa / Math.max(1, frenteActual - OB377.ductoInicio)) : 0))),
-        tendido:     Math.min(e.total, Math.round(acum.tendido     * (fracEtapa > 0 ? (frenteEnEtapa / Math.max(1, frenteActual - OB377.ductoInicio)) : 0))),
-        mediaTapada: Math.min(e.total, Math.round(acum.mediaTapada * (fracEtapa > 0 ? (frenteEnEtapa / Math.max(1, frenteActual - OB377.ductoInicio)) : 0))),
-        tapadaFinal: Math.min(e.total, Math.round(acum.tapadaFinal * (fracEtapa > 0 ? (frenteEnEtapa / Math.max(1, frenteActual - OB377.ductoInicio)) : 0))),
-        total: e.total
-      };
-    };
-    const e1 = calcEtapa(OB377.etapa1);
-    const e2 = calcEtapa(OB377.etapa2);
-    const tramo1Pct = pct(e1.pretapada + e1.tendido + e1.tapadaFinal, e1.total * 3);
-    const tramo2Pct = pct(e2.pretapada + e2.tendido + e2.tapadaFinal, e2.total * 3);
+    // --- Cupros ---
+    const cupros = Array.isArray(pcA.cupros) ? pcA.cupros : [];
 
-    // ----- Helpers de UI -----
-    const tareasTexto = (arr, prop) => {
-      if (!arr || !arr.length) return 'Sin tareas en el día de hoy';
-      return arr.map(x => {
-        const txt = (typeof x === 'string') ? x : (x[prop] || x.desc || x.tarea || x.descripcion || '');
-        return esc(txt);
-      }).filter(Boolean).join(' · ') || 'Sin tareas en el día de hoy';
-    };
-    // (barras CSS eliminadas — se usan tablas limpias)
-    const patEstadoBadge = (loc) => {
-      if (loc.estado === 'Liberada') return `<span class="badge ok">Liberada</span>`;
-      if (loc.fueraNorma) return `<span class="badge danger">${loc.resistencia}Ω &gt; 2Ω</span>`;
-      if (loc.resistencia != null) return `<span class="badge warn">${loc.resistencia}Ω · ${esc(loc.estado)}</span>`;
-      return `<span class="badge muted">${esc(loc.estado)}</span>`;
-    };
+    // --- Pendientes ---
+    const pends = ho.pendientes || [];
 
-    // ----- Tramos FO por etapa (texto para página 1) -----
-    const tramosE1 = tramos.filter(t => (parsePK(t.pkDesde || t.pkInicio) || 0) < OB377.etapa2.inicio);
-    const tramosE2 = tramos.filter(t => (parsePK(t.pkDesde || t.pkInicio) || 0) >= OB377.etapa2.inicio);
-    const tramoLine = (t) => {
-      const desde = fmtPK(parsePK(t.pkDesde || t.pkInicio));
-      const hasta = fmtPK(parsePK(t.pkHasta || t.pkFin));
-      const m = t.metros ? `${t.metros} mts` : '—';
-      return `${desde} → ${hasta} · ${m}${t.actividad ? ' · ' + esc(t.actividad) : ''}`;
-    };
+    // --- Fotos ---
+    const fotos = (ci.fotos && ci.fotos.length) ? ci.fotos : [];
 
-    // ----- Cámaras inteligentes (las que cayeron dentro del frente) -----
-    const camarasAlcanzadas = OB377.camaras.filter(c => (parsePK(c.pk) || 0) <= frenteActual);
-
-    // ----- HTML -----
     const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
-    <title>Parte Diario — ${esc(p.obraNombre || OB377.proyecto)} ${fd}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Parte Diario â€” ${esc(p.obraNombre || '')} ${fd}</title>
     <style>
       *{margin:0;padding:0;box-sizing:border-box;}
-      body{font-family:'Barlow',Arial,Helvetica,sans-serif;font-size:11px;color:#0D1B3E;background:#fff;padding:8px;max-width:100vw;overflow-x:hidden;-webkit-text-size-adjust:100%;line-height:1.35;}
-      .pagebreak{page-break-after:always;}
-      .page{max-width:1000px;margin:0 auto 16px;}
-      .topbar{background:#003087;color:#fff;padding:8px 12px;border-radius:4px 4px 0 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
-      .topbar h1{font-family:'Barlow Condensed','Barlow',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
-      .topbar .fecha{background:#FFD100;color:#003087;padding:3px 10px;border-radius:3px;font-weight:700;font-size:12px;}
-      .subbar{background:#F4F6FA;border:1px solid #d1d9e6;border-top:none;padding:6px 12px;font-size:10px;display:grid;grid-template-columns:1fr;gap:3px;}
-      .subbar b{color:#003087;}
-      .meta-row{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0;font-size:10px;}
-      .meta-cell{border:1px solid #d1d9e6;border-radius:3px;padding:5px 8px;background:#fff;}
-      .meta-cell b{display:block;color:#003087;font-size:9px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
-      .section-title{background:#003087;color:#fff;padding:5px 10px;margin:10px 0 6px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.5px;border-radius:3px;}
-      .specialty-block{border:1px solid #d1d9e6;border-radius:4px;margin-bottom:8px;background:#fff;overflow:hidden;}
-      .specialty-header{background:#F4F6FA;padding:5px 10px;border-bottom:1px solid #d1d9e6;display:flex;justify-content:space-between;align-items:center;}
-      .specialty-header h3{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#003087;font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
-      .specialty-header .header-meta{font-size:9px;color:#475569;text-align:right;}
-      .specialty-body{padding:6px 10px;font-size:10px;}
-      .specialty-body .no-data{color:#94a3b8;font-style:italic;}
-      .fo-grid{display:grid;grid-template-columns:1fr;gap:3px;font-size:10px;}
-      .fo-row{display:flex;flex-wrap:wrap;gap:2px 8px;padding:4px 0;border-bottom:1px dotted #e5e7eb;align-items:baseline;}
-      .fo-row b{color:#003087;font-size:9px;text-transform:uppercase;min-width:110px;flex-shrink:0;}
-      .fo-row .fo-detail{flex:1;min-width:100px;font-size:10px;color:#475569;word-break:break-word;}
-      .fo-row .acum{margin-left:auto;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:600;color:#00884A;font-size:10px;white-space:nowrap;flex-shrink:0;}
-      .fo-row .acum.zero{color:#94a3b8;}
-      .footer-row{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px;}
-      .dato-relevante{border:1px solid #d1d9e6;border-radius:4px;padding:8px;background:#FFFEF0;}
-      .dato-relevante b{color:#003087;font-size:10px;display:block;margin-bottom:3px;text-transform:uppercase;}
-      .firmas{display:grid;grid-template-columns:1fr;gap:4px;}
-      .firma{border:1px solid #d1d9e6;border-radius:3px;padding:6px 8px;font-size:9px;background:#fff;display:flex;justify-content:space-between;align-items:center;}
-      .firma b{color:#475569;text-transform:uppercase;font-size:8px;letter-spacing:.3px;}
-      .firma .who{font-weight:600;color:#0D1B3E;}
-      /* Page 2 — Estadísticas */
-      .stats-grid{display:grid;grid-template-columns:1fr;gap:10px;}
-      .stat-card{border:1px solid #d1d9e6;border-radius:4px;padding:8px;background:#fff;}
-      .stat-card h4{font-family:'Barlow Condensed',sans-serif;color:#003087;font-size:12px;font-weight:700;text-transform:uppercase;margin-bottom:6px;border-bottom:2px solid #FFD100;padding-bottom:3px;letter-spacing:.3px;}
-      .stat-card .stat-sub{font-size:9px;color:#475569;margin-bottom:6px;}
-      /* Tablas estadísticas limpias */
-      .tbl-stats{width:100%;border-collapse:collapse;font-size:10px;margin:4px 0;}
-      .tbl-stats th{background:#003087;color:#fff;padding:4px 6px;text-align:left;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
-      .tbl-stats td{padding:4px 6px;border-bottom:1px solid #e5e7eb;vertical-align:middle;font-size:10px;}
-      .tbl-stats tr:nth-child(even) td{background:#F8F9FC;}
-      .tbl-stats .num{font-family:'JetBrains Mono',monospace;font-weight:700;text-align:right;white-space:nowrap;color:#0D1B3E;}
-      .tbl-stats .num.ok{color:#00884A;} .tbl-stats .num.warn{color:#D97706;} .tbl-stats .num.danger{color:#CC1F1F;} .tbl-stats .num.low{color:#94a3b8;}
-      .tbl-stats .loc-id{font-weight:600;color:#003087;font-size:9px;white-space:nowrap;}
-      .tbl-stats .obs-cell{font-size:9px;color:#475569;max-width:120px;word-break:break-word;}
-      .tbl-stats .total-row td{background:#003087;color:#fff;font-weight:700;font-family:'Barlow Condensed',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.3px;padding:5px 6px;}
-      .tbl-stats .total-row .num{color:#FFD100;}
-      .tbl-stats .row-cerrado td{opacity:.5;text-decoration:line-through;}
-      .fo-etapa-box{border:1px solid #d1d9e6;border-radius:3px;padding:6px;margin-bottom:8px;background:#F4F6FA;}
-      .fo-etapa-label{color:#003087;font-weight:700;font-size:10px;margin-bottom:4px;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.3px;}
-      .avance-highlight{background:#FFD100;color:#003087;padding:8px 12px;border-radius:3px;display:flex;justify-content:space-between;align-items:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;margin-top:6px;}
-      .avance-highlight .val{background:#003087;color:#FFD100;padding:3px 10px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:16px;}
-      .badge{display:inline-block;padding:2px 7px;border-radius:8px;font-size:8px;font-weight:700;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px;}
-      .badge.ok{background:#d1fae5;color:#00884A;} .badge.warn{background:#fef3c7;color:#D97706;} .badge.danger{background:#fee2e2;color:#CC1F1F;} .badge.muted{background:#e5e7eb;color:#475569;}
-      .photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px;}
-      .photo-grid .ph{border:1px solid #d1d9e6;border-radius:3px;padding:3px;background:#fafafa;text-align:center;}
-      .photo-grid .ph img{width:100%;max-height:140px;object-fit:cover;display:block;border-radius:2px;}
-      .photo-grid .ph small{display:block;font-size:8px;color:#666;margin-top:2px;}
-      .actions{position:sticky;top:0;z-index:99;background:#fff;padding:8px 0;margin-bottom:8px;border-bottom:1px solid #eee;display:flex;gap:8px;flex-wrap:wrap;}
-      .actions button{padding:10px 16px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+      body{font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#1a1a2e;background:#fff;padding:10px;max-width:100vw;overflow-x:hidden;-webkit-text-size-adjust:100%;}
+      .header{background:#003087;color:#fff;padding:10px 12px;border-radius:4px;margin-bottom:8px;}
+      .header h1{font-size:14px;font-weight:700;margin-bottom:2px;}
+      .header h1 span{color:#FFD100;}
+      .header-info{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:10px;opacity:.9;margin-top:4px;}
+      .section{margin-bottom:8px;}
+      .section-title{background:#003087;color:#fff;padding:4px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-radius:2px;margin-bottom:4px;}
+      .section-title span{color:#FFD100;}
+      table{width:100%;border-collapse:collapse;margin-bottom:2px;}
+      th{background:#e8ecf4;color:#003087;padding:3px 6px;font-size:9px;text-align:left;font-weight:700;text-transform:uppercase;letter-spacing:.3px;border-bottom:2px solid #003087;}
+      td{padding:3px 6px;border-bottom:1px solid #e5e7eb;font-size:10px;vertical-align:top;}
+      tr:nth-child(even) td{background:#f8f9fc;}
+      .bold{font-weight:700;color:#003087;white-space:nowrap;}
+      .mono{font-family:monospace;font-weight:700;}
+      .ok{color:#00884A;} .danger{color:#CC1F1F;} .warn{color:#D97706;} .muted{color:#94a3b8;font-style:italic;}
+      .obs{color:#64748b;font-size:9px;max-width:140px;word-break:break-word;}
+      .kv{display:flex;flex-wrap:wrap;gap:2px 16px;font-size:10px;padding:4px 0;}
+      .kv b{color:#003087;}
+      .hse-box{padding:6px 8px;border-radius:3px;font-size:10px;font-weight:600;}
+      .hse-ok{background:#d1fae5;color:#00884A;border:1px solid #00884A;}
+      .hse-bad{background:#fee2e2;color:#CC1F1F;border:1px solid #CC1F1F;}
+      .badge{display:inline-block;padding:1px 6px;border-radius:6px;font-size:8px;font-weight:700;text-transform:uppercase;}
+      .badge-crit{background:#CC1F1F;color:#fff;} .badge-alto{background:#D97706;color:#fff;} .badge-medio{background:#e5e7eb;color:#475569;} .badge-bajo{background:#d1fae5;color:#00884A;}
+      .pend-item{padding:3px 0;border-bottom:1px dotted #e5e7eb;font-size:10px;display:flex;gap:6px;align-items:baseline;}
+      .pend-item:last-child{border-bottom:none;}
+      .dato-dia{background:#FFF8E1;border:1px solid #FFD100;border-radius:3px;padding:6px 8px;font-size:10px;margin-top:4px;}
+      .dato-dia b{color:#003087;}
+      .firmas{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;padding-top:6px;border-top:1px solid #ccc;}
+      .firma{flex:1;min-width:120px;text-align:center;font-size:9px;}
+      .firma b{display:block;margin-bottom:16px;color:#003087;}
+      .firma .line{border-top:1px solid #333;padding-top:2px;}
+      .photo-grid{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;}
+      .ph{border:1px solid #ddd;border-radius:2px;padding:2px;text-align:center;width:calc(50% - 4px);max-width:180px;}
+      .ph img{width:100%;max-height:120px;object-fit:cover;display:block;}
+      .ph small{font-size:7px;color:#666;display:block;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+      .footer{margin-top:8px;font-size:8px;color:#94a3b8;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px;border-top:1px solid #e5e7eb;padding-top:4px;}
+      .actions{position:sticky;top:0;z-index:99;background:#fff;padding:6px 0;margin-bottom:6px;border-bottom:1px solid #eee;display:flex;gap:6px;}
+      .actions button{padding:6px 12px;border:none;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;}
       .btn-print{background:#003087;color:#fff;} .btn-share{background:#00884A;color:#fff;}
-      .pend-list{display:flex;flex-direction:column;gap:4px;}
-      .pend-item{border-left:3px solid #D97706;background:#FFFEF0;padding:4px 8px;border-radius:0 3px 3px 0;font-size:9px;}
-      .pend-item.crit{border-left-color:#CC1F1F;background:#FEF2F2;}
-      .pend-item.cerrado{border-left-color:#00884A;background:#F0FDF4;opacity:.7;text-decoration:line-through;}
-
-      @media screen and (min-width:600px){
-        body{padding:14px;font-size:11px;max-width:1000px;margin:0 auto;}
-        .subbar{grid-template-columns:1fr 1fr 1fr;gap:10px;}
-        .meta-row{grid-template-columns:1fr 1fr 1fr 1fr;}
-        .footer-row{grid-template-columns:1fr 1fr;}
-        .firmas{grid-template-columns:1fr 1fr 1fr;}
-        .stats-grid{grid-template-columns:1fr 1fr;}
-        .stats-grid .full{grid-column:1 / -1;}
-        .photo-grid{grid-template-columns:repeat(4,1fr);}
-      }
-      @media print{
-        body{padding:5mm;font-size:9px;}
-        .no-print,.actions{display:none!important;}
-        .pagebreak{page-break-after:always;}
-        .stats-grid{grid-template-columns:1fr 1fr;}
-        .meta-row{grid-template-columns:1fr 1fr 1fr 1fr;}
-        .subbar{grid-template-columns:1fr 1fr 1fr;}
-        .firmas{grid-template-columns:1fr 1fr 1fr;}
-        .photo-grid{grid-template-columns:repeat(3,1fr);}
-        .ducto-loc::after{font-size:7px;}
-      }
-      @page{size:A4;margin:8mm 6mm;}
+      @media(min-width:600px){body{padding:20px;max-width:800px;margin:0 auto;font-size:12px;} td,th{padding:4px 8px;font-size:11px;} .header h1{font-size:16px;}}
+      @media print{.actions{display:none!important;} body{padding:6mm;} @page{size:A4;margin:8mm;}}
     </style>
     </head><body>
 
-    <!-- ===================== PÁGINA 1 ===================== -->
-    <div class="page">
-      <div class="topbar">
-        <h1>Informe Diario Inspección</h1>
-        <span class="fecha">${fd}</span>
-      </div>
-      <div class="subbar">
-        <div><b>Contratista:</b> ${esc(OB377.contratista)}</div>
-        <div><b>Proyecto:</b> ${esc(p.obraNombre || OB377.proyecto)}</div>
-        <div><b>Frente:</b> Oleoducto 24" — Etapa 2.1</div>
-      </div>
-
-      <div class="meta-row">
-        <div class="meta-cell"><b>Inspector</b>${esc(p.inspectorNombre || '—')}</div>
-        <div class="meta-cell"><b>Condiciones</b>${esc(cond.clima || '—')} · ${cond.temperatura ? cond.temperatura + '°C' : '—'} · ${esc(cond.visibilidad || '—')}</div>
-        <div class="meta-cell"><b>Especialidad</b>Elect. & Instrum.</div>
-        <div class="meta-cell"><b>N° Reporte / Turno</b>${esc((p.id || '').slice(-6).toUpperCase() || '—')} · ${esc(p.turno || '—')}</div>
-      </div>
-
-      <div class="section-title">Novedades HSE</div>
-      <div class="specialty-block"><div class="specialty-body">
-        ${hse.sinNovedad
-          ? '<b style="color:#00884A;">✓ SIN NOVEDAD</b> — Sin incidentes ni cuasi-accidentes en el período.'
-          : `<b style="color:#CC1F1F;">⚠ CON NOVEDAD</b> — Criticidad: ${esc(hse.criticidad || '—')}<br/>${esc(hse.detalle || '')}`}
-      </div></div>
-
-      <div class="section-title">Tareas Realizadas</div>
-
-      <div class="specialty-block">
-        <div class="specialty-header"><h3>⏚ Malla de P.A.T.</h3><div class="header-meta">${patLiberadas} de ${OB377.locaciones.length} liberadas · ${patPctTotal}%</div></div>
-        <div class="specialty-body">
-          ${patArr.length
-            ? patArr.map(m => `<div>• <b>${esc(m.locacion || '—')}</b>: ${m.ohm != null ? m.ohm + ' Ω' : 's/medición'} — ${esc(m.estado || '—')}${m.obs ? ' · ' + esc(m.obs) : ''}</div>`).join('')
-            : '<div class="no-data">Sin tareas en el día de hoy</div>'}
-        </div>
-      </div>
-
-      <div class="specialty-block">
-        <div class="specialty-header"><h3>⚡ Protección Catódica</h3><div class="header-meta">${cuprosOK} / ${OB377.totalCupros} cupros · ${pcPct}%</div></div>
-        <div class="specialty-body">
-          ${cupros.length
-            ? cupros.map(c => `<div>• <b>${esc(c.pk)}</b> — Martillo: <span class="badge ${c.martillo === 'PASS' ? 'ok' : 'danger'}">${esc(c.martillo || '—')}</span> · R: ${c.resistencia || '—'} mΩ</div>`).join('')
-            : '<div class="no-data">Sin tareas en el día de hoy</div>'}
-        </div>
-      </div>
-
-      <div class="specialty-block">
-        <div class="specialty-header"><h3>🔌 Canalizaciones E&I</h3><div class="header-meta">${canalAvanceGeneral}% promedio</div></div>
-        <div class="specialty-body">
-          ${elecTareas.length
-            ? elecTareas.map(t => `<div>• <b>${esc(t.locacion || '—')}</b>: ${esc(t.desc || t.tarea || '')} — ${t.avance != null ? t.avance + '%' : ''} ${t.obs ? '· ' + esc(t.obs) : ''}</div>`).join('')
-            : '<div class="no-data">Sin tareas en el día de hoy</div>'}
-        </div>
-      </div>
-
-      <div class="specialty-block">
-        <div class="specialty-header"><h3>🔆 Fibra Óptica</h3><div class="header-meta">Avance general: <b style="color:#00884A;font-size:11px;">${foAvanceGeneral}%</b></div></div>
-        <div class="specialty-body">
-          <div class="fo-grid">
-            <div class="fo-row"><b>Pre-tapada FO</b><span class="fo-detail">${fo.preTapadaHoy ? fo.preTapadaHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.pretapada === 0 ? 'zero' : ''}">${acum.pretapada.toLocaleString('es-AR')} mts</span></div>
-            <div class="fo-row"><b>Tendido FO</b><span class="fo-detail">${fo.tendidoHoy ? fo.tendidoHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.tendido === 0 ? 'zero' : ''}">${acum.tendido.toLocaleString('es-AR')} mts</span></div>
-            <div class="fo-row"><b>Nivelación</b><span class="fo-detail">${fo.nivelacionHoy ? fo.nivelacionHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.nivelacion === 0 ? 'zero' : ''}">${acum.nivelacion.toLocaleString('es-AR')} mts</span></div>
-            <div class="fo-row"><b>Media Tapada + Malla</b><span class="fo-detail">${fo.mediaTapadaHoy ? fo.mediaTapadaHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.mediaTapada === 0 ? 'zero' : ''}">${acum.mediaTapada.toLocaleString('es-AR')} mts</span></div>
-            <div class="fo-row"><b>Tapada Final</b><span class="fo-detail">${fo.tapadaFinalHoy ? fo.tapadaFinalHoy + ' m hoy' : 'Sin tareas hoy'}</span><span class="acum ${acum.tapadaFinal === 0 ? 'zero' : ''}">${acum.tapadaFinal.toLocaleString('es-AR')} mts</span></div>
-            <div class="fo-row"><b>OTROS</b><span class="fo-detail">${esc(fo.observacion || '—')}</span><span class="acum">${fo.empalmes || 0} emp · ${fo.bobinas || 0} bob</span></div>
-          </div>
-        </div>
-      </div>
-
-      ${(ci.fotos && ci.fotos.length) ? `
-        <div class="section-title">Reporte Fotográfico del Día (${ci.fotos.length})</div>
-        <div class="photo-grid">
-          ${ci.fotos.slice(0, 8).map((f, i) => `<div class="ph">
-            <img src="${f.dataUrl || f.src || ''}" alt="Foto ${i+1}" />
-            ${f.name ? `<small>${esc(f.name)}</small>` : ''}
-          </div>`).join('')}
-        </div>` : ''}
-
-      <div class="footer-row">
-        <div class="dato-relevante">
-          <b>Dato relevante del día</b>
-          ${esc((ho.comunicacion || ci.novedadOperativa || ho.cambiosPrograma || '—'))}
-        </div>
-        <div class="firmas">
-          <div class="firma"><b>Firma Inspector</b><span class="who">${esc(p.inspectorNombre || ci.firma || '—')}</span></div>
-          <div class="firma"><b>Firma Jefe Insp.</b><span class="who">—</span></div>
-          <div class="firma"><b>Firma YPF</b><span class="who">—</span></div>
-        </div>
+    <div class="header">
+      <h1><span>GTL</span> INSPECTOR â€” Parte Diario</h1>
+      <div class="header-info">
+        <span><b>Obra:</b> ${esc(p.obraNombre || '')}</span>
+        <span><b>Fecha:</b> ${fd}</span>
+        <span><b>Turno:</b> ${esc(p.turno || '')}</span>
+        <span><b>Inspector:</b> ${esc(p.inspectorNombre || '')}</span>
+        <span><b>DNI:</b> ${esc(p.inspectorDni || '')}</span>
       </div>
     </div>
 
-    <div class="pagebreak"></div>
-
-    <!-- ===================== PÁGINA 2 — ESTADÍSTICAS ===================== -->
-    <div class="page">
-      <div class="topbar">
-        <h1>Estadísticas — Avance General</h1>
-        <span class="fecha">${fd}</span>
+    <!-- Condiciones -->
+    <div class="section">
+      <div class="kv">
+        <span><b>Clima:</b> ${esc(cond.clima || 'â€”')}</span>
+        <span><b>Alerta YPF:</b> ${esc(cond.alertaYpf || 'â€”')}</span>
+        <span><b>Temp:</b> ${cond.temperatura != null ? cond.temperatura + 'Â°C' : 'â€”'}</span>
+        <span><b>Visibilidad:</b> ${esc(cond.visibilidad || 'â€”')}</span>
       </div>
-      <div class="subbar">
-        <div><b>Contratista:</b> ${esc(OB377.contratista)}</div>
-        <div><b>Proyecto:</b> ${esc(p.obraNombre || OB377.proyecto)}</div>
-        <div><b>Total ducto:</b> 45.133 m · ${fmtPK(OB377.ductoInicio)} → ${fmtPK(OB377.ductoFin)}</div>
+    </div>
+
+    <!-- HSE -->
+    <div class="section">
+      <div class="section-title">Novedades HSE</div>
+      <div class="hse-box ${hse.sinNovedad ? 'hse-ok' : 'hse-bad'}">
+        ${hse.sinNovedad ? 'âœ“ SIN NOVEDAD â€” Sin incidentes ni cuasi-accidentes en el perÃ­odo.' : 'âœ— CON NOVEDAD â€” ' + esc(hse.detalle || '') + (hse.criticidad ? ' Â· Criticidad: ' + esc(hse.criticidad) : '')}
       </div>
+    </div>
 
-      <div class="stats-grid">
-        <!-- Canalizaciones E&I -->
-        <div class="stat-card">
-          <h4>Canalizaciones E&I</h4>
-          <table class="tbl-stats">
-            <thead><tr><th>Locación</th><th>Descripción</th><th>Avance</th></tr></thead>
-            <tbody>
-              ${anyMatch
-                ? canalPorLoc.map(L => `<tr><td class="loc-id">${esc(L.id)}</td><td>${esc(L.desc.slice(0,80))}</td><td class="num ${L.avance>=80?'ok':L.avance>=30?'warn':'low'}">${L.avance}%</td></tr>`).join('')
-                : elecTareas.map(t => `<tr><td class="loc-id">${esc(t.locacion||'—')}</td><td>${esc((t.desc||t.tarea||'').slice(0,80))}</td><td class="num ${(parseInt(t.avance,10)||0)>=80?'ok':(parseInt(t.avance,10)||0)>=30?'warn':'low'}">${t.avance||0}%</td></tr>`).join('')}
-            </tbody>
-            <tfoot><tr class="total-row"><td colspan="2">Avance general</td><td class="num">${canalAvanceGeneral}%</td></tr></tfoot>
-          </table>
-        </div>
+    <!-- TAREAS REALIZADAS -->
+    <div class="section">
+      <div class="section-title">Tareas realizadas â€” <span>Malla P.A.T.</span></div>
+      <table>
+        <thead><tr><th>LocaciÃ³n</th><th>Resistencia</th><th>Estado</th><th>ObservaciÃ³n</th></tr></thead>
+        <tbody>${patRows}</tbody>
+      </table>
+    </div>
 
-        <!-- Protección Catódica + PAT -->
-        <div class="stat-card">
-          <h4>Protección Catódica</h4>
-          <table class="tbl-stats">
-            <tbody>
-              <tr><td>Cupros ejecutadas (PASS)</td><td class="num">${cuprosOK}</td></tr>
-              <tr><td>Total planificadas</td><td class="num">${OB377.totalCupros}</td></tr>
-            </tbody>
-            <tfoot><tr class="total-row"><td>Avance</td><td class="num">${pcPct}%</td></tr></tfoot>
-          </table>
+    <div class="section">
+      <div class="section-title">Tareas realizadas â€” <span>Canalizaciones E&I</span></div>
+      <table>
+        <thead><tr><th>LocaciÃ³n</th><th>DescripciÃ³n</th><th>Avance</th><th>Obs.</th></tr></thead>
+        <tbody>${canalRows}</tbody>
+      </table>
+    </div>
 
-          <h4 style="margin-top:10px;">Avances P.A.T.</h4>
-          <table class="tbl-stats">
-            <thead><tr><th>Locación</th><th>Resistencia</th><th>Estado</th><th>Observación</th></tr></thead>
-            <tbody>
-              ${patPorLoc.map(L => `<tr>
-                <td class="loc-id">${esc(L.id)}</td>
-                <td class="num ${L.fueraNorma?'danger':L.resistencia!=null?'ok':''}">${L.resistencia != null ? L.resistencia + ' Ω' : 'S/M'}</td>
-                <td>${patEstadoBadge(L)}</td>
-                <td class="obs-cell">${esc((L.obs||'').slice(0,40))}</td>
-              </tr>`).join('')}
-            </tbody>
-            <tfoot><tr class="total-row"><td colspan="3">Avance P.A.T.</td><td class="num">${patPctTotal}%</td></tr></tfoot>
-          </table>
-        </div>
+    ${cupros.length ? `<div class="section">
+      <div class="section-title">Tareas realizadas â€” <span>ProtecciÃ³n CatÃ³dica</span></div>
+      <table>
+        <thead><tr><th>PK</th><th>Test Martillo</th><th>Resistencia</th></tr></thead>
+        <tbody>${cupros.map(c => `<tr><td class="bold">${esc(c.pk || 'â€”')}</td><td class="${/PASS/i.test(c.martillo||'') ? 'ok' : 'danger'} mono">${esc(c.martillo || 'â€”')}</td><td class="mono">${c.resistencia != null ? c.resistencia + ' mÎ©' : 'â€”'}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>` : ''}
 
-        <!-- Fibra Óptica por Etapas -->
-        <div class="stat-card full">
-          <h4>Fibra Óptica — Avance por Etapas</h4>
-          <div class="fo-etapa-box">
-            <div class="fo-etapa-label">${OB377.etapa1.label}</div>
-            <table class="tbl-stats">
-              <thead><tr><th>Actividad</th><th>Ejecutado</th><th>Total</th><th>%</th></tr></thead>
-              <tbody>
-                <tr><td>Pre-tapada ducto</td><td class="num">${e1.pretapada.toLocaleString('es-AR')} m</td><td class="num">${e1.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e1.pretapada,e1.total)}%</td></tr>
-                <tr><td>Tendido FO</td><td class="num">${e1.tendido.toLocaleString('es-AR')} m</td><td class="num">${e1.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e1.tendido,e1.total)}%</td></tr>
-                <tr><td>Tapada FO</td><td class="num">${e1.tapadaFinal.toLocaleString('es-AR')} m</td><td class="num">${e1.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e1.tapadaFinal,e1.total)}%</td></tr>
-              </tbody>
-              <tfoot><tr class="total-row"><td colspan="3">Avance Total Tramo 1</td><td class="num">${tramo1Pct}%</td></tr></tfoot>
-            </table>
-          </div>
-
-          <div class="fo-etapa-box">
-            <div class="fo-etapa-label">${OB377.etapa2.label}</div>
-            <table class="tbl-stats">
-              <thead><tr><th>Actividad</th><th>Ejecutado</th><th>Total</th><th>%</th></tr></thead>
-              <tbody>
-                <tr><td>Pre-tapada</td><td class="num">${e2.pretapada.toLocaleString('es-AR')} m</td><td class="num">${e2.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e2.pretapada,e2.total)}%</td></tr>
-                <tr><td>Tendido FO</td><td class="num">${e2.tendido.toLocaleString('es-AR')} m</td><td class="num">${e2.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e2.tendido,e2.total)}%</td></tr>
-                <tr><td>1/2 Tapada + Malla</td><td class="num">${e2.mediaTapada.toLocaleString('es-AR')} m</td><td class="num">${e2.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e2.mediaTapada,e2.total)}%</td></tr>
-                <tr><td>Tapada Final</td><td class="num">${e2.tapadaFinal.toLocaleString('es-AR')} m</td><td class="num">${e2.total.toLocaleString('es-AR')} m</td><td class="num">${pct(e2.tapadaFinal,e2.total)}%</td></tr>
-              </tbody>
-              <tfoot><tr class="total-row"><td colspan="3">Avance Total Tramo 2</td><td class="num">${tramo2Pct}%</td></tr></tfoot>
-            </table>
-          </div>
-
-          <div class="avance-highlight">
-            <span>Avance Total Montaje F.O.</span>
-            <span class="val">${foAvanceGeneral}%</span>
-          </div>
-        </div>
-
-        <!-- Instrumentación -->
-        <div class="stat-card">
-          <h4>Instrumentación</h4>
-          <table class="tbl-stats">
-            <tbody>
-              <tr><td>Liberados / Precom</td><td class="num">${instLiberados} / ${OB377.totalInstrumentos}</td></tr>
-              <tr><td>Montados / Conexionados</td><td class="num">${instMontados}</td></tr>
-              <tr><td>Total cargados en parte</td><td class="num">${instArr.length}</td></tr>
-            </tbody>
-            <tfoot><tr class="total-row"><td>Avance</td><td class="num">${pct(instLiberados, OB377.totalInstrumentos)}%</td></tr></tfoot>
-          </table>
-        </div>
-
-        <!-- Pendientes -->
-        <div class="stat-card">
-          <h4>Pendientes Hand Over</h4>
-          ${(ho.pendientes && ho.pendientes.length) ? `<table class="tbl-stats">
-            <thead><tr><th>Criticidad</th><th>Descripción</th><th>Responsable</th></tr></thead>
-            <tbody>
-              ${ho.pendientes.slice(0, 10).map(x => {
-                if (typeof x === 'string') return `<tr><td>—</td><td colspan="2">${esc(x)}</td></tr>`;
-                const cerr = x.estado === 'Cerrado';
-                return `<tr class="${cerr ? 'row-cerrado' : ''}">
-                  <td><span class="badge ${/Cr[ií]tico/i.test(x.criticidad||'')?'danger':/Alto/i.test(x.criticidad||'')?'warn':'muted'}">${esc(x.criticidad||'Medio')}</span></td>
-                  <td${cerr?' style="text-decoration:line-through;opacity:.6;"':''}>${esc(x.desc||'')}</td>
-                  <td class="loc-id">${esc(x.responsable||'—')}</td>
-                </tr>`;
-              }).join('')}
-            </tbody>
-          </table>` : '<p class="no-data">Sin pendientes registrados.</p>'}
-        </div>
+    <div class="section">
+      <div class="section-title">Tareas realizadas â€” <span>Fibra Ã“ptica</span></div>
+      <table>
+        <thead><tr><th>Actividad</th><th>Hoy</th><th>Acumulado</th></tr></thead>
+        <tbody>
+          <tr><td class="bold">Pre-tapada FO</td><td class="mono">${foHoy('preTapada')}</td><td class="mono">${foAcum('preTapada')}</td></tr>
+          <tr><td class="bold">Tendido FO</td><td class="mono">${foHoy('tendido')}</td><td class="mono">${foAcum('tendido')}</td></tr>
+          <tr><td class="bold">NivelaciÃ³n</td><td class="mono">${foHoy('nivelacion')}</td><td class="mono">${foAcum('nivelacion')}</td></tr>
+          <tr><td class="bold">Media tapada + Malla</td><td class="mono">${foHoy('mediaTapada')}</td><td class="mono">${foAcum('mediaTapada')}</td></tr>
+          <tr><td class="bold">Tapada final / Coronamiento</td><td class="mono">${foHoy('tapadaFinal')}</td><td class="mono">${foAcum('tapadaFinal')}</td></tr>
+        </tbody>
+      </table>
+      <div class="kv" style="margin-top:2px;">
+        ${fo.otdr ? '<span class="ok"><b>OTDR:</b> Realizado</span>' : ''}
+        ${fo.bobinas ? '<span><b>Bobinas:</b> ' + fo.bobinas + '</span>' : ''}
+        ${fo.empalmes ? '<span><b>Empalmes:</b> ' + fo.empalmes + '</span>' : ''}
+        ${fo.observacion ? '<span><b>Obs:</b> ' + esc(fo.observacion) + '</span>' : ''}
       </div>
+    </div>
 
-      <div class="footer-row" style="margin-top:12px;">
-        <div class="dato-relevante">
-          <b>Resumen ejecutivo</b>
-          Frente de pre-tapada FO en <b>${fmtPK(frenteActual)}</b> · acumulado <b>${acum.pretapada.toLocaleString('es-AR')} m</b> de ${OB377.totalMetros.toLocaleString('es-AR')} m (<b>${foAvanceGeneral}%</b>). PAT con <b>${patLiberadas}</b> de ${OB377.locaciones.length} locaciones liberadas (${patPctTotal}% promedio). Cupros PC: ${cuprosOK}/${OB377.totalCupros}. Instrumentos liberados: ${instLiberados}/${OB377.totalInstrumentos}.
-        </div>
-        <div class="firmas">
-          <div class="firma"><b>Inspector</b><span class="who">${esc(p.inspectorNombre || '—')}</span></div>
-          <div class="firma"><b>Jefe Insp.</b><span class="who">—</span></div>
-          <div class="firma"><b>YPF</b><span class="who">—</span></div>
-        </div>
+    ${instArr.length ? `<div class="section">
+      <div class="section-title">Tareas realizadas â€” <span>InstrumentaciÃ³n</span></div>
+      <table>
+        <thead><tr><th>TAG</th><th>DescripciÃ³n</th><th>Estado</th><th>Obs.</th></tr></thead>
+        <tbody>${instArr.slice(0, 20).map(t => `<tr><td class="bold">${esc(t.tag || '')}</td><td>${esc(t.desc || '')}</td><td>${esc(t.estado || '')}</td><td class="obs">${esc((t.obs || '').slice(0, 40))}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>` : ''}
+
+    <!-- Pendientes Hand Over -->
+    ${pends.length ? `<div class="section">
+      <div class="section-title">Pendientes â€” <span>Hand Over</span></div>
+      ${pends.map(x => {
+        if (typeof x === 'string') return `<div class="pend-item">${esc(x)}</div>`;
+        const cls = /Cr[iÃ­]tico/i.test(x.criticidad||'') ? 'badge-crit' : /Alto/i.test(x.criticidad||'') ? 'badge-alto' : /Medio/i.test(x.criticidad||'') ? 'badge-medio' : 'badge-bajo';
+        return `<div class="pend-item"><span class="badge ${cls}">${esc(x.criticidad||'Medio')}</span><span>${esc(x.desc||'')}${x.responsable ? ' Â· <b>' + esc(x.responsable) + '</b>' : ''}</span></div>`;
+      }).join('')}
+    </div>` : ''}
+
+    <!-- Comunicaciones / Dato del dÃ­a -->
+    ${(ho.comunicacion || ci.novedadOperativa) ? `<div class="dato-dia">
+      ${ho.comunicacion ? '<div><b>Comunicaciones:</b> ' + esc(ho.comunicacion) + '</div>' : ''}
+      ${ci.novedadOperativa ? '<div><b>Novedad operativa:</b> ' + esc(ci.novedadOperativa) + '</div>' : ''}
+    </div>` : ''}
+
+    <!-- Fotos -->
+    ${fotos.length ? `<div class="section" style="margin-top:6px;">
+      <div class="section-title">Reporte fotogrÃ¡fico (${fotos.length})</div>
+      <div class="photo-grid">
+        ${fotos.slice(0, 6).map((f, i) => `<div class="ph"><img src="${f.dataUrl || f.src || ''}" alt="Foto ${i+1}" />${f.name ? `<small>${esc(f.name)}</small>` : ''}</div>`).join('')}
       </div>
+    </div>` : ''}
+
+    <!-- Firmas -->
+    <div class="firmas">
+      <div class="firma"><b>Firma Inspector</b><div class="line">${esc(ci.firma || p.inspectorNombre || '')}</div></div>
+      <div class="firma"><b>Firma Jefe Insp.</b><div class="line">â€”</div></div>
+      <div class="firma"><b>Firma YPF</b><div class="line">â€”</div></div>
+    </div>
+
+    <div class="footer">
+      <span>ID: ${esc(p.id || 'â€”')}</span>
+      <span>GTL Inspector â€” YPF Upstream Â· GRUPO TERGO LAF</span>
+      <span>${new Date().toLocaleString('es-AR')}</span>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded',()=>{
-      const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      const bar=document.createElement('div');bar.className='actions no-print';
-      bar.innerHTML='<button class="btn-print" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>'
-        +(navigator.share?'<button class="btn-share" id="shareBtn">📤 Compartir</button>':'');
-      document.body.prepend(bar);
-      const sb=document.getElementById('shareBtn');
-      if(sb)sb.onclick=async()=>{try{await navigator.share({title:document.title,text:'Parte Diario GTL',url:location.href})}catch(e){}};
-      if(!isMobile){setTimeout(()=>window.print(),400);}
+      if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){
+        var bar=document.createElement('div');bar.className='actions';
+        bar.innerHTML='<button class="btn-print" onclick="window.print()">Imprimir / PDF</button>'
+          +(navigator.share?'<button class="btn-share" onclick="navigator.share({title:document.title}).catch(()=>{})">Compartir</button>':'');
+        document.body.prepend(bar);
+      } else { window.print(); }
     });
     <\/script>
     </body></html>`;
 
     const w = window.open('', '_blank');
     if (w) { w.document.write(html); w.document.close(); }
-    else UI.toast('Permitir pop-ups para exportar PDF', 'warn');
+    else toast('Permitir pop-ups para exportar PDF', 'warn');
   }
 
-  // Función original (fallback legacy)
+
+  // FunciÃ³n original (fallback legacy)
   function printParte(p) {
     if (!p) return;
     const fd = formatDate(p.fecha);
@@ -1000,7 +745,7 @@
     const obraEsp = (obra && obra.especialidades) || [];
     const obraLocs = (obra && obra.locaciones) || [];
 
-    // ¿Qué especialidades mostrar? Las de la obra + las que tengan datos en el parte
+    // Â¿QuÃ© especialidades mostrar? Las de la obra + las que tengan datos en el parte
     const especialidades = obraEsp.slice();
     [["fo", Object.keys(fo).length],
      ["pat", pat.mediciones.length || pat.puntuales.length],
@@ -1013,7 +758,7 @@
     });
     const has = (k) => especialidades.includes(k);
 
-    // Si PAT está habilitada en la obra pero el parte no trae mediciones, generamos placeholders por cada locación
+    // Si PAT estÃ¡ habilitada en la obra pero el parte no trae mediciones, generamos placeholders por cada locaciÃ³n
     if (has("pat") && (!pat.mediciones || !pat.mediciones.length) && obraLocs.length) {
       pat.mediciones = obraLocs.map(l => ({ locacion: l, ohm: "", estado: "No iniciada", obs: "" }));
     }
@@ -1021,13 +766,13 @@
     const row = (k, v) => v != null && v !== "" ? `<tr><td class="k">${k}</td><td>${v}</td></tr>` : "";
     const badge = (v, ok) => `<span class="badge ${ok ? "ok":"danger"}">${v}</span>`;
     const nl2li = arr => {
-      if (!arr || !arr.length) return "—";
+      if (!arr || !arr.length) return "â€”";
       return `<ul>${arr.map(x => {
         if (typeof x === "string") return `<li>${esc(x)}</li>`;
         const desc = esc(x.texto || x.desc || JSON.stringify(x));
         const estado = x.estado === "Cerrado" ? ' <span class="badge ok">Cerrado</span>' : "";
-        const crit = x.criticidad ? ` <span class="badge ${/Cr[ií]tico/.test(x.criticidad) ? "danger" : /Alto/.test(x.criticidad) ? "warn" : "muted"}">${esc(x.criticidad)}</span>` : "";
-        const resp = x.responsable ? ` — ${esc(x.responsable)}` : "";
+        const crit = x.criticidad ? ` <span class="badge ${/Cr[iÃ­]tico/.test(x.criticidad) ? "danger" : /Alto/.test(x.criticidad) ? "warn" : "muted"}">${esc(x.criticidad)}</span>` : "";
+        const resp = x.responsable ? ` â€” ${esc(x.responsable)}` : "";
         return `<li>${desc}${resp}${crit}${estado}</li>`;
       }).join("")}</ul>`;
     };
@@ -1035,70 +780,70 @@
     const tramosHtml = (fo.tramos && fo.tramos.length)
       ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Desde</th><th>Hasta</th><th>Actividad</th><th>Metros</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
           ${fo.tramos.map(t => `<tr>
-            <td>Cám ${esc(t.camDesde)}</td><td>${t.camHasta === "Receptora" ? "<b>Receptora</b>" : "Cám " + esc(t.camHasta)}</td>
-            <td>${esc(t.actividad)}</td><td>${t.metros ? esc(t.metros) + " m" : "—"}</td>
+            <td>CÃ¡m ${esc(t.camDesde)}</td><td>${t.camHasta === "Receptora" ? "<b>Receptora</b>" : "CÃ¡m " + esc(t.camHasta)}</td>
+            <td>${esc(t.actividad)}</td><td>${t.metros ? esc(t.metros) + " m" : "â€”"}</td>
             <td><span class="badge ${t.estado === "OK" ? "ok" : t.estado === "Parcial" ? "warn" : "danger"}">${esc(t.estado)}</span></td>
             <td>${esc(t.obs || "")}</td>
           </tr>`).join("")}
         </tbody></table></div>` : "<p class='none'>Sin tramos registrados</p>";
 
     const patHtml = (pat.mediciones && pat.mediciones.length)
-      ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Locación</th><th>Ω</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
+      ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>LocaciÃ³n</th><th>Î©</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
           ${pat.mediciones.map(m => {
             const v = parseFloat(m.ohm);
             const cls = !isNaN(v) ? (v > 2 ? "danger" : v > 1.5 ? "warn" : "ok") : "";
-            return `<tr class="${cls}"><td>${esc(m.locacion)}</td><td>${esc(m.ohm) || "—"}</td><td>${esc(m.estado)}</td><td>${esc(m.obs || "")}</td></tr>`;
+            return `<tr class="${cls}"><td>${esc(m.locacion)}</td><td>${esc(m.ohm) || "â€”"}</td><td>${esc(m.estado)}</td><td>${esc(m.obs || "")}</td></tr>`;
           }).join("")}
         </tbody></table></div>` : "";
 
     const cuprosHtml = (pc.cupros && pc.cupros.length)
       ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>PK</th><th>Martillo</th><th>Resistencia</th></tr></thead><tbody>
-          ${pc.cupros.map(c => `<tr><td>${esc(c.pk)}</td><td>${badge(c.martillo || "—", c.martillo === "PASS")}</td><td>${c.resistencia ? esc(c.resistencia) + " mΩ" : "—"}</td></tr>`).join("")}
+          ${pc.cupros.map(c => `<tr><td>${esc(c.pk)}</td><td>${badge(c.martillo || "â€”", c.martillo === "PASS")}</td><td>${c.resistencia ? esc(c.resistencia) + " mÎ©" : "â€”"}</td></tr>`).join("")}
         </tbody></table></div>` : "";
 
     const tareasHtml = (arr) => (arr && arr.length)
-      ? `<ul>${arr.map(t => `<li>${esc(t.desc || t.tag || "")} — <b>${esc(t.tipo || t.estado || "")}</b> ${t.avance != null ? t.avance + "%" : ""} ${t.obs ? "· " + esc(t.obs) : ""}</li>`).join("")}</ul>` : "";
+      ? `<ul>${arr.map(t => `<li>${esc(t.desc || t.tag || "")} â€” <b>${esc(t.tipo || t.estado || "")}</b> ${t.avance != null ? t.avance + "%" : ""} ${t.obs ? "Â· " + esc(t.obs) : ""}</li>`).join("")}</ul>` : "";
 
     const foSection = has("fo") ? `
-      <h3>🔆 Fibra Óptica</h3>
+      <h3>ðŸ”† Fibra Ã“ptica</h3>
       <table class="kv">
         ${row("Tendido hoy", fo.tendidoHoy ? fo.tendidoHoy + " m" : null)}
         ${row("Tendido acumulado", fo.tendidoAcum ? fo.tendidoAcum + " m" : null)}
         ${row("Pre-tapada hoy/acum", fo.preTapadaHoy || fo.preTapadaAcum ? (fo.preTapadaHoy || 0) + " / " + (fo.preTapadaAcum || 0) + " m" : null)}
-        ${row("Nivelación hoy/acum", fo.nivelacionHoy || fo.nivelacionAcum ? (fo.nivelacionHoy || 0) + " / " + (fo.nivelacionAcum || 0) + " m" : null)}
+        ${row("NivelaciÃ³n hoy/acum", fo.nivelacionHoy || fo.nivelacionAcum ? (fo.nivelacionHoy || 0) + " / " + (fo.nivelacionAcum || 0) + " m" : null)}
         ${row("Media tapada hoy/acum", fo.mediaTapadaHoy || fo.mediaTapadaAcum ? (fo.mediaTapadaHoy || 0) + " / " + (fo.mediaTapadaAcum || 0) + " m" : null)}
         ${row("Tapada final hoy/acum", fo.tapadaFinalHoy || fo.tapadaFinalAcum ? (fo.tapadaFinalHoy || 0) + " / " + (fo.tapadaFinalAcum || 0) + " m" : null)}
-        ${row("PK inicio/fin del día", fo.pkInicioDia || fo.pkFinDia ? formatPK(fo.pkInicioDia) + " → " + formatPK(fo.pkFinDia) : null)}
-        ${row("OTDR / bobinas", (fo.otdr === true || fo.otdr === "true") ? "Sí · " + (fo.bobinas || 0) + " bobinas" : null)}
+        ${row("PK inicio/fin del dÃ­a", fo.pkInicioDia || fo.pkFinDia ? formatPK(fo.pkInicioDia) + " â†’ " + formatPK(fo.pkFinDia) : null)}
+        ${row("OTDR / bobinas", (fo.otdr === true || fo.otdr === "true") ? "SÃ­ Â· " + (fo.bobinas || 0) + " bobinas" : null)}
         ${row("Empalmes hoy", fo.empalmes || null)}
-        ${row("Observación", fo.observacion || null)}
+        ${row("ObservaciÃ³n", fo.observacion || null)}
       </table>
-      <h4 style="margin:8px 0 4px;font-size:12px;color:#555;">Tramos por cámara</h4>
+      <h4 style="margin:8px 0 4px;font-size:12px;color:#555;">Tramos por cÃ¡mara</h4>
       ${tramosHtml}` : "";
 
     const patSection = has("pat") ? `
-      <h3>⏚ Mallas PAT</h3>${patHtml || "<p class='none'>Sin mediciones</p>"}
+      <h3>âš Mallas PAT</h3>${patHtml || "<p class='none'>Sin mediciones</p>"}
       ${pat.puntuales && pat.puntuales.length ? `<p style="margin:4px 0;font-size:11px;"><b>Mediciones puntuales:</b> ${pat.puntuales.length} registrada(s)</p>` : ""}
-      ${pat.observacion ? `<p style="margin:4px 0;font-size:11px;"><b>Observación inspector:</b> ${esc(pat.observacion)}</p>` : ""}
+      ${pat.observacion ? `<p style="margin:4px 0;font-size:11px;"><b>ObservaciÃ³n inspector:</b> ${esc(pat.observacion)}</p>` : ""}
       ${pat.resumen ? `<p style="margin:4px 0;font-size:11px;"><b>Resumen:</b> ${esc(pat.resumen)}</p>` : ""}` : "";
 
     const pcSection = has("pc") ? `
-      <h3>⚡ Protección Catódica</h3>
+      <h3>âš¡ ProtecciÃ³n CatÃ³dica</h3>
       ${cuprosHtml || "<p class='none'>Sin cupros registrados</p>"}
       <table class="kv">
         ${row("Wenner (cant)", pc.wennerCount || null)}
         ${row("Ubicaciones Wenner", pc.wennerUbic || null)}
-        ${row("Juntas dieléctricas", pc.juntasCount || null)}
+        ${row("Juntas dielÃ©ctricas", pc.juntasCount || null)}
         ${row("Estado megado", pc.juntasEstado || null)}
       </table>` : "";
 
     const elecSection = has("elec") ? `
-      <h3>🔌 Eléctrico</h3>${tareasHtml(elec.tareas) || "<p class='none'>Sin tareas</p>"}` : "";
+      <h3>ðŸ”Œ ElÃ©ctrico</h3>${tareasHtml(elec.tareas) || "<p class='none'>Sin tareas</p>"}` : "";
 
     const instSection = has("inst") ? `
-      <h3>🎛 Instrumentación</h3>
+      <h3>ðŸŽ› InstrumentaciÃ³n</h3>
       ${inst.instrumentos && inst.instrumentos.length ? `
-        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>TAG</th><th>Descripción</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
+        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>TAG</th><th>DescripciÃ³n</th><th>Estado</th><th>Obs</th></tr></thead><tbody>
           ${inst.instrumentos.map(t => `<tr>
             <td><b>${esc(t.tag || "")}</b></td>
             <td>${esc(t.desc || "")}</td>
@@ -1108,32 +853,32 @@
         </tbody></table></div>` : "<p class='none'>Sin instrumentos</p>"}` : "";
 
     const civSection = has("civ") ? `
-      <h3>🏗 Civil</h3>
+      <h3>ðŸ— Civil</h3>
       ${civ.tareas && civ.tareas.length ? `
         <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Tarea</th><th>Tipo</th><th>Avance</th><th>Obs</th></tr></thead><tbody>
           ${civ.tareas.map(t => `<tr>
             <td>${esc(t.desc || "")}</td>
             <td>${esc(t.tipo || "")}</td>
-            <td>${t.avance != null ? t.avance + "%" : "—"}</td>
+            <td>${t.avance != null ? t.avance + "%" : "â€”"}</td>
             <td>${esc(t.obs || "")}</td>
           </tr>`).join("")}
         </tbody></table></div>` : "<p class='none'>Sin tareas civiles</p>"}` : "";
 
     const mecSection = has("mec") ? `
-      <h3>⚙ Mecánico</h3>
+      <h3>âš™ MecÃ¡nico</h3>
       ${mec.tareas && mec.tareas.length ? `
         <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Tarea</th><th>Tipo</th><th>Avance</th><th>Obs</th></tr></thead><tbody>
           ${mec.tareas.map(t => `<tr>
             <td>${esc(t.desc || "")}</td>
             <td>${esc(t.tipo || "")}</td>
-            <td>${t.avance != null ? t.avance + "%" : "—"}</td>
+            <td>${t.avance != null ? t.avance + "%" : "â€”"}</td>
             <td>${esc(t.obs || "")}</td>
           </tr>`).join("")}
-        </tbody></table></div>` : "<p class='none'>Sin tareas mecánicas</p>"}` : "";
+        </tbody></table></div>` : "<p class='none'>Sin tareas mecÃ¡nicas</p>"}` : "";
 
     const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
-    <title>Parte Diario — ${esc(p.obraNombre)} ${fd}</title>
+    <title>Parte Diario â€” ${esc(p.obraNombre)} ${fd}</title>
     <style>
       *{margin:0;padding:0;box-sizing:border-box;}
       body{font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#111;background:#fff;padding:10px;max-width:100vw;overflow-x:hidden;-webkit-text-size-adjust:100%;}
@@ -1179,7 +924,7 @@
     </style>
     </head><body>
     <div class="header">
-      <h1>GTL <span>●</span> INSPECTOR — Parte Diario</h1>
+      <h1>GTL <span>â—</span> INSPECTOR â€” Parte Diario</h1>
       <div class="meta">
         <div><b>Obra:</b> ${esc(p.obraNombre)}</div>
         <div><b>Fecha:</b> ${fd} &nbsp;|&nbsp; <b>Turno:</b> ${esc(p.turno)}</div>
@@ -1187,15 +932,15 @@
       </div>
     </div>
 
-    <h2>1. CONDICIONES DEL DÍA</h2>
+    <h2>1. CONDICIONES DEL DÃA</h2>
     <table class="kv">
       ${row("Clima", cond.clima)} ${row("Alerta YPF", cond.alertaYpf)}
-      ${row("Temperatura", cond.temperatura ? cond.temperatura + " °C" : null)} ${row("Visibilidad", cond.visibilidad)}
+      ${row("Temperatura", cond.temperatura ? cond.temperatura + " Â°C" : null)} ${row("Visibilidad", cond.visibilidad)}
     </table>
 
     <h2>2. HSE</h2>
     <table class="kv">
-      ${row("Sin novedad", `<span class="${hse.sinNovedad ? "hse-ok":"hse-bad"}">${hse.sinNovedad ? "✓ SÍ" : "✗ NO"}</span>`)}
+      ${row("Sin novedad", `<span class="${hse.sinNovedad ? "hse-ok":"hse-bad"}">${hse.sinNovedad ? "âœ“ SÃ" : "âœ— NO"}</span>`)}
       ${row("Detalle", hse.detalle || null)}
       ${row("Criticidad", hse.criticidad || null)}
       ${row("Charlas / capacitaciones", hse.charlas && hse.charlas.length ? hse.charlas.map(c => esc(c.tema || c)).join(", ") : null)}
@@ -1216,7 +961,7 @@
             <span class="pend-desc-pdf">${desc}</span>
             <span class="pend-info-pdf">
               ${x.responsable ? `<b>${esc(x.responsable)}</b>` : ""}
-              ${x.criticidad ? `<span class="badge ${/Cr[ií]tico/.test(x.criticidad) ? "danger" : /Alto/.test(x.criticidad) ? "warn" : "muted"}">${esc(x.criticidad)}</span>` : ""}
+              ${x.criticidad ? `<span class="badge ${/Cr[iÃ­]tico/.test(x.criticidad) ? "danger" : /Alto/.test(x.criticidad) ? "warn" : "muted"}">${esc(x.criticidad)}</span>` : ""}
               ${cerrado ? '<span class="badge ok">Cerrado</span>' : '<span class="badge muted">Abierto</span>'}
             </span>
           </div>`;
@@ -1247,7 +992,7 @@
     </div>
 
     ${(ci.fotos && ci.fotos.length) ? `
-      <h3 style="margin-top:14px;">📷 Fotos del día (${ci.fotos.length})</h3>
+      <h3 style="margin-top:14px;">ðŸ“· Fotos del dÃ­a (${ci.fotos.length})</h3>
       <div class="photo-grid">
         ${ci.fotos.map((f, i) => `<div class="ph">
           <img src="${f.dataUrl || f.src || ''}" alt="Foto ${i+1}" />
@@ -1256,12 +1001,12 @@
       </div>
     ` : (p.fotosCount > 0 ? `
       <p style="margin-top:14px;color:#888;font-style:italic;font-size:11px;">
-        📷 Hay ${p.fotosCount} foto(s) en el parte (no disponibles en esta vista — abrir el parte original).
+        ðŸ“· Hay ${p.fotosCount} foto(s) en el parte (no disponibles en esta vista â€” abrir el parte original).
       </p>` : "")}
 
     <div class="footer">
-      <span>ID: ${esc(p.id || "—")}</span>
-      <span>GTL Inspector — YPF Upstream &nbsp;|&nbsp; GRUPO TERGO LAF</span>
+      <span>ID: ${esc(p.id || "â€”")}</span>
+      <span>GTL Inspector â€” YPF Upstream &nbsp;|&nbsp; GRUPO TERGO LAF</span>
       <span>Generado: ${new Date().toLocaleString("es-AR")}</span>
     </div>
     <script>
@@ -1269,8 +1014,8 @@
       const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if(!isMobile){window.print();return;}
       const bar=document.createElement('div');bar.className='actions no-print';
-      bar.innerHTML='<button class="btn-print" onclick="window.print()">🖨 Imprimir / PDF</button>'
-        +(navigator.share?'<button class="btn-share" id="shareBtn">📤 Compartir</button>':'');
+      bar.innerHTML='<button class="btn-print" onclick="window.print()">ðŸ–¨ Imprimir / PDF</button>'
+        +(navigator.share?'<button class="btn-share" id="shareBtn">ðŸ“¤ Compartir</button>':'');
       document.body.prepend(bar);
       const sb=document.getElementById('shareBtn');
       if(sb)sb.onclick=async()=>{try{await navigator.share({title:document.title,text:'Parte Diario GTL',url:location.href})}catch(e){}};
@@ -1284,8 +1029,8 @@
   }
 
   global.GTL = global.GTL || {};
-  // Exportamos printParte apuntando a la versión ejecutiva (formato Hugo Farias OB-377)
-  // La función legacy queda disponible internamente como fallback.
+  // Exportamos printParte apuntando a la versiÃ³n ejecutiva (formato Hugo Farias OB-377)
+  // La funciÃ³n legacy queda disponible internamente como fallback.
   global.GTL.UI = { toast, modal, confirm, navigate, esc, formatPK, formatDate, formatDateTime, todayIso, vibrate, refreshConnUI, printParte: printParteEjecutivo, printParteLegacy: printParte, renderObraTabs, OB377, parsePK, fmtPK };
   global.GTL.Router = { route, navigate, render };
 
@@ -1310,7 +1055,7 @@
 
     Sync.bindNetworkEvents();
     Sync.onSync((e) => {
-      if (e.type === "drain-end" && e.sent > 0) toast(`✓ Sincronizados ${e.sent} parte(s)`, "ok");
+      if (e.type === "drain-end" && e.sent > 0) toast(`âœ“ Sincronizados ${e.sent} parte(s)`, "ok");
       refreshConnUI();
     });
 
@@ -1329,7 +1074,7 @@
     // Drain inicial
     setTimeout(() => Sync.drainQueue().catch(() => {}), 1500);
 
-    // Refresh conn UI periódico
+    // Refresh conn UI periÃ³dico
     setInterval(refreshConnUI, 15000);
   }
 
