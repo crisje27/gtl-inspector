@@ -1066,9 +1066,24 @@
       render();
     }, 250);
 
-    // Service worker
+    // Service worker — forzar actualización en cada carga
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js").catch(err => console.warn("SW reg fail", err));
+      navigator.serviceWorker.register("sw.js").then(reg => {
+        // Forzar check de actualización
+        reg.update().catch(() => {});
+        // Cuando hay un SW nuevo esperando, activarlo automáticamente
+        if (reg.waiting) reg.waiting.postMessage({ type: "skip-waiting" });
+        reg.addEventListener("updatefound", () => {
+          const nw = reg.installing;
+          if (nw) nw.addEventListener("statechange", () => {
+            if (nw.state === "installed" && navigator.serviceWorker.controller) {
+              nw.postMessage({ type: "skip-waiting" });
+              toast("App actualizada — recargando...", "ok");
+              setTimeout(() => location.reload(), 1500);
+            }
+          });
+        });
+      }).catch(err => console.warn("SW reg fail", err));
     }
 
     // Drain inicial
