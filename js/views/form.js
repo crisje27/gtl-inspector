@@ -519,12 +519,12 @@
       btn.onclick = () => {
         const id = btn.dataset.obraId;
         if (id !== (obraActiva && obraActiva.id)) {
-          // Conservar datos comunes y solo cambiar la obra
+          // Conservar todos los datos y solo cambiar la obra
           const newObra = cfg.obras.find(o => o.id === id);
           if (parte && newObra) {
             parte.obraId = newObra.id;
             parte.obraNombre = newObra.nombre;
-            parte.avances = {};                    // resetear avances (son por obra)
+            // avances se conservan — especialidades similares entre obras
           } else {
             parte = null;
           }
