@@ -600,8 +600,9 @@
       <table>
         <thead><tr><th>Actividad</th><th>Hoy</th><th>Acumulado</th></tr></thead>
         <tbody>
-          <tr><td class="bold">Pre-tapada FO</td><td class="mono">${foHoy('preTapada')}</td><td class="mono">${foAcum('preTapada')}</td></tr>
+          <tr><td class="bold">Tendido de Tritubo</td><td class="mono">${foHoy('tritubo')}</td><td class="mono">${foAcum('tritubo')}</td></tr>
           <tr><td class="bold">Tendido FO</td><td class="mono">${foHoy('tendido')}</td><td class="mono">${foAcum('tendido')}</td></tr>
+          <tr><td class="bold">Pre-tapada FO</td><td class="mono">${foHoy('preTapada')}</td><td class="mono">${foAcum('preTapada')}</td></tr>
           <tr><td class="bold">Nivelaci√≥n</td><td class="mono">${foHoy('nivelacion')}</td><td class="mono">${foAcum('nivelacion')}</td></tr>
           <tr><td class="bold">Media tapada + Malla</td><td class="mono">${foHoy('mediaTapada')}</td><td class="mono">${foAcum('mediaTapada')}</td></tr>
           <tr><td class="bold">Tapada final / Coronamiento</td><td class="mono">${foHoy('tapadaFinal')}</td><td class="mono">${foAcum('tapadaFinal')}</td></tr>
@@ -1066,19 +1067,19 @@
       render();
     }, 250);
 
-    // Service worker ó forzar actualizaciÛn en cada carga
+    // Service worker ÔøΩ forzar actualizaciÔøΩn en cada carga
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("sw.js").then(reg => {
-        // Forzar check de actualizaciÛn
+        // Forzar check de actualizaciÔøΩn
         reg.update().catch(() => {});
-        // Cuando hay un SW nuevo esperando, activarlo autom·ticamente
+        // Cuando hay un SW nuevo esperando, activarlo automÔøΩticamente
         if (reg.waiting) reg.waiting.postMessage({ type: "skip-waiting" });
         reg.addEventListener("updatefound", () => {
           const nw = reg.installing;
           if (nw) nw.addEventListener("statechange", () => {
             if (nw.state === "installed" && navigator.serviceWorker.controller) {
               nw.postMessage({ type: "skip-waiting" });
-              toast("App actualizada ó recargando...", "ok");
+              toast("App actualizada ÔøΩ recargando...", "ok");
               setTimeout(() => location.reload(), 1500);
             }
           });

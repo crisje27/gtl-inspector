@@ -143,7 +143,7 @@ function generateHeaders(especialidades) {
   ];
 
   var per = {
-    fo: ["fo_preTapadaHoy","fo_preTapadaAcum","fo_tendidoHoy","fo_tendidoAcum",
+    fo: ["fo_trituboHoy","fo_trituboAcum","fo_preTapadaHoy","fo_preTapadaAcum","fo_tendidoHoy","fo_tendidoAcum",
          "fo_pkInicioDia","fo_pkFinDia","fo_nivelacionHoy","fo_nivelacionAcum",
          "fo_mediaTapadaHoy","fo_mediaTapadaAcum","fo_tapadaFinalHoy","fo_tapadaFinalAcum",
          "fo_otdr","fo_bobinas","fo_empalmes","fo_tramos_json","fo_observacion"],

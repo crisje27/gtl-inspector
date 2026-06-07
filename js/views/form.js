@@ -236,6 +236,7 @@
 
   function defaultAvance(key, obra) {
     if (key === "fo") return {
+      trituboHoy: 0,   trituboAcum: 0,
       preTapadaHoy: 0, preTapadaAcum: 0,
       tendidoHoy: 0,   tendidoAcum: 0, pkInicioDia: 0, pkFinDia: 0,
       nivelacionHoy: 0, nivelacionAcum: 0,
@@ -260,7 +261,15 @@
 
   /* ---------- FO ---------- */
   function blockFO(d) {
+    // Migración: partes viejos sin tritubo
+    if (d.trituboHoy == null) d.trituboHoy = 0;
+    if (d.trituboAcum == null) d.trituboAcum = 0;
     return `
+      <div class="field"><label>Tendido de Tritubo</label><small class="hint">Terna de ductos donde luego se sopla la FO.</small></div>
+      <div class="section-grid-2">
+        ${pairMetros("Tritubo", "trituboHoy", "trituboAcum", d)}
+        <div></div>
+      </div>
       <div class="section-grid-2">
         ${pairMetros("Pre-tapada", "preTapadaHoy", "preTapadaAcum", d)}
         ${pairMetros("Nivelación", "nivelacionHoy", "nivelacionAcum", d)}
@@ -1006,7 +1015,7 @@
     // Validar metros acumulados >= hoy en FO
     const fo = parte.avances.fo;
     if (fo) {
-      const pares = [["preTapadaHoy","preTapadaAcum"],["tendidoHoy","tendidoAcum"],
+      const pares = [["trituboHoy","trituboAcum"],["preTapadaHoy","preTapadaAcum"],["tendidoHoy","tendidoAcum"],
                      ["nivelacionHoy","nivelacionAcum"],["mediaTapadaHoy","mediaTapadaAcum"],
                      ["tapadaFinalHoy","tapadaFinalAcum"]];
       for (const [h, a] of pares) {
