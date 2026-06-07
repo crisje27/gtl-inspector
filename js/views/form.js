@@ -80,13 +80,16 @@
     view.innerHTML = `
       <div class="form-header">
         <div class="row1">
-          <div>
-            <div class="obra-name">${esc(obra.nombre)}</div>
+          <div style="min-width:0;flex:1;">
+            <div class="obra-name" style="display:flex;align-items:center;gap:6px;">
+              <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(obra.nombre)}</span>
+              <button id="btnCambiarObra" type="button" title="Cambiar obra"
+                style="flex-shrink:0;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:inherit;border-radius:6px;padding:2px 7px;font-size:11px;cursor:pointer;line-height:1.4;">
+                ✎ cambiar
+              </button>
+            </div>
             <div class="text-muted fs-12">${esc(cfg.inspector.nombre)} · ${esc(obra.contratista || "")}</div>
           </div>
-          ${cfg.obras.length > 1 ? `<select class="input" id="selObra" style="max-width:160px;">
-            ${cfg.obras.map(o => `<option value="${o.id}" ${o.id === obra.id ? "selected" : ""}>${esc(o.nombre)}</option>`).join("")}
-          </select>` : ""}
         </div>
         <div class="row2">
           <div class="field" style="margin:0;">
@@ -475,15 +478,63 @@
     `;
   }
 
+  /* ---------- Modal cambio de obra ---------- */
+  function openObraModal(view, cfg) {
+    const obras = cfg.obras || [];
+    const obraActiva = Store.getObraActiva();
+    const modal = document.getElementById("modalRoot");
+    modal.innerHTML = `
+      <div class="modal-backdrop" id="obraModalBackdrop" style="display:flex;align-items:flex-end;justify-content:center;">
+        <div class="modal-sheet" style="width:100%;max-width:480px;background:var(--surface,#1e2230);border-radius:16px 16px 0 0;padding:20px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.4);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <span style="font-weight:700;font-size:15px;color:var(--text,#fff);">Seleccionar obra</span>
+            <button id="obraModalClose" type="button" style="background:none;border:none;color:var(--text-muted,#888);font-size:20px;cursor:pointer;padding:4px 8px;">✕</button>
+          </div>
+          ${obras.length === 0 ? `<p style="color:var(--text-muted,#888);font-size:13px;">No hay obras configuradas.</p>` :
+            obras.map(o => `
+              <button type="button" class="obra-option-btn" data-obra-id="${o.id}"
+                style="display:flex;align-items:center;gap:10px;width:100%;background:${o.id === (obraActiva && obraActiva.id) ? 'rgba(0,80,164,.35)' : 'rgba(255,255,255,.05)'};
+                border:1px solid ${o.id === (obraActiva && obraActiva.id) ? 'var(--accent,#0055A4)' : 'rgba(255,255,255,.1)'};
+                color:var(--text,#fff);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;text-align:left;">
+                <span style="font-size:18px;">${o.id === (obraActiva && obraActiva.id) ? '✓' : '○'}</span>
+                <div style="min-width:0;">
+                  <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(o.nombre)}</div>
+                  <div style="font-size:11px;color:var(--text-muted,#888);">${esc(o.contratista || '')}${o.pkInicio ? ' · PK ' + o.pkInicio + ' – ' + o.pkFin : ''}</div>
+                </div>
+              </button>`).join("")
+          }
+          <button type="button" id="btnIrSettings"
+            style="display:flex;align-items:center;gap:8px;width:100%;background:none;border:1px dashed rgba(255,255,255,.2);
+            color:var(--text-muted,#aaa);border-radius:10px;padding:10px 14px;margin-top:4px;cursor:pointer;font-size:13px;">
+            ⚙ Gestionar obras en Configuración
+          </button>
+        </div>
+      </div>`;
+
+    const close = () => { modal.innerHTML = ""; };
+    modal.querySelector("#obraModalClose").onclick = close;
+    modal.querySelector("#obraModalBackdrop").onclick = (e) => { if (e.target === modal.querySelector("#obraModalBackdrop")) close(); };
+    modal.querySelector("#btnIrSettings").onclick = () => { close(); UI.navigate("/settings"); };
+    modal.querySelectorAll(".obra-option-btn").forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.dataset.obraId;
+        if (id !== (obraActiva && obraActiva.id)) {
+          Store.setObraActiva(id);
+          parte = null;
+          close();
+          render(view);
+        } else {
+          close();
+        }
+      };
+    });
+  }
+
   /* ---------- Bind general ---------- */
   function bindAll(view, obra, cfg) {
-    // Selector obra
-    const selObra = view.querySelector("#selObra");
-    if (selObra) selObra.onchange = () => {
-      Store.setObraActiva(selObra.value);
-      parte = null;
-      render(view);
-    };
+    // Botón cambiar obra
+    const btnCambiarObra = view.querySelector("#btnCambiarObra");
+    if (btnCambiarObra) btnCambiarObra.onclick = () => openObraModal(view, cfg);
 
     // Header
     view.querySelector("#fFecha").addEventListener("change", e => parte.fecha = e.target.value);
