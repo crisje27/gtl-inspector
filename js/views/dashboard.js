@@ -1,6 +1,6 @@
 /* ============================================================
    GTL Inspector — Dashboard ejecutivo (rediseñado)
-   Reporte gerencial completo para YPF Upstream
+   Reporte gerencial completo para YPF Midstream
    Muestra TODO lo que se carga en el parte diario
    ============================================================ */
 (function (global) {
@@ -52,7 +52,7 @@
           <div>
             <div class="exec-eyebrow">Reporte gerencial · GTL Inspector</div>
             <h2 class="exec-title">${esc(obra.nombre)}</h2>
-            <div class="exec-meta">${esc(obra.contratista || "")} · ${esc(obra.cliente || "YPF Upstream")} · N° ${esc(obra.numero || "—")}</div>
+            <div class="exec-meta">${esc(obra.contratista || "")} · ${esc(obra.cliente || "YPF Midstream")} · N° ${esc(obra.numero || "—")}</div>
           </div>
           <div class="exec-header-actions">
             <button class="btn btn-sm" id="btnRefresh" title="Actualizar">↻</button>
@@ -197,7 +197,7 @@
 
       <div class="exec-footer no-print-hide">
         <span>GTL — GRUPO TERGO LAF</span>
-        <span>YPF Upstream Neuquén</span>
+        <span>YPF Midstream Neuquén</span>
         <span id="genStamp">—</span>
       </div>
     `;

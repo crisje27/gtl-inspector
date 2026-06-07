@@ -5,7 +5,7 @@
  *  Persiste en Google Sheets, una pestaña por obra.
  *
  *  Autor: GTL — GRUPO TERGO LAF
- *  Cliente: YPF Upstream Neuquén
+ *  Cliente: YPF Midstream Neuquén
  * ============================================================
  *
  *  Para deployar:
@@ -102,7 +102,7 @@ function setupSheets() {
   if (hConfig.getLastRow() <= 1) {
     hConfig.appendRow(["version", "1.0.0", new Date()]);
     hConfig.appendRow(["empresa", "GTL", new Date()]);
-    hConfig.appendRow(["cliente", "YPF Upstream Neuquén", new Date()]);
+    hConfig.appendRow(["cliente", "YPF Midstream Neuquén", new Date()]);
   }
   ensureSheet(ss, SHEET_OBRAS,
     ["id","nombre","cliente","contratista","numero","pkInicio","pkFin","locaciones","especialidades","creadaEn","actualizadaEn"]);

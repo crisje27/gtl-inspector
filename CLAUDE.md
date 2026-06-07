@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-GTL Inspector is an offline-first PWA for daily field inspections in electrical/instrumentation operations at YPF Upstream's Vaca Muerta oil field (Argentina). Built with vanilla HTML/CSS/JS (zero npm dependencies), backed by Google Apps Script + Google Sheets as a serverless database.
+GTL Inspector is an offline-first PWA for daily field inspections in electrical/instrumentation operations at YPF Midstream's Vaca Muerta oil field (Argentina). Built with vanilla HTML/CSS/JS (zero npm dependencies), backed by Google Apps Script + Google Sheets as a serverless database.
 
 ## Development
 

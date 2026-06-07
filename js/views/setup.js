@@ -39,7 +39,7 @@
     view.innerHTML = `
       <section class="setup-hero">
         <h1>GTL Inspector</h1>
-        <p>Sistema de inspección E&amp;I — YPF Upstream</p>
+        <p>Sistema de inspección E&amp;I — YPF Midstream</p>
       </section>
 
       <div class="stepper" id="stepper"></div>

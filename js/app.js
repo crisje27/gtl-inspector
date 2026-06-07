@@ -308,7 +308,7 @@
       title: "GTL Inspector",
       content: `<p><b>Versión:</b> 1.0.0</p>
                 <p><b>Empresa:</b> GRUPO TERGO LAF (GTL)</p>
-                <p><b>Cliente:</b> YPF Upstream Neuquén</p>
+                <p><b>Cliente:</b> YPF Midstream Neuquén</p>
                 <p class="text-muted">Sistema de inspección de Electricidad, Instrumentación y Control para obras en Vaca Muerta.</p>`,
       actions: [{ label: "Cerrar", kind: "primary" }]
     });
@@ -657,7 +657,7 @@
 
     <div class="footer">
       <span>ID: ${esc(p.id || '—')}</span>
-      <span>GTL Inspector — YPF Upstream · GRUPO TERGO LAF</span>
+      <span>GTL Inspector — YPF Midstream · GRUPO TERGO LAF</span>
       <span>${new Date().toLocaleString('es-AR')}</span>
     </div>
 
@@ -1007,7 +1007,7 @@
 
     <div class="footer">
       <span>ID: ${esc(p.id || "—")}</span>
-      <span>GTL Inspector — YPF Upstream &nbsp;|&nbsp; GRUPO TERGO LAF</span>
+      <span>GTL Inspector — YPF Midstream &nbsp;|&nbsp; GRUPO TERGO LAF</span>
       <span>Generado: ${new Date().toLocaleString("es-AR")}</span>
     </div>
     <script>

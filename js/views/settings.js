@@ -107,7 +107,7 @@
         <dl class="kv">
           <dt>Versión</dt><dd>1.0.0</dd>
           <dt>Empresa</dt><dd>GRUPO TERGO LAF (GTL)</dd>
-          <dt>Cliente</dt><dd>YPF Upstream Neuquén</dd>
+          <dt>Cliente</dt><dd>YPF Midstream Neuquén</dd>
           <dt>Director</dt><dd>Luis Francica</dd>
         </dl>
       </div>

@@ -1,7 +1,7 @@
 {
   "name": "GTL Inspector — YPF E&I",
   "short_name": "GTL Inspector",
-  "description": "Sistema de inspección de Electricidad, Instrumentación y Control para obras YPF Upstream",
+  "description": "Sistema de inspección de Electricidad, Instrumentación y Control para obras YPF Midstream",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

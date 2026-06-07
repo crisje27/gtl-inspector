@@ -1,9 +1,9 @@
 # GTL Inspector — PWA de Inspección E&I
 
-Sistema mobile-first para inspectores de **Electricidad, Instrumentación y Control** que trabajan en obras de **YPF Upstream** en Vaca Muerta.
+Sistema mobile-first para inspectores de **Electricidad, Instrumentación y Control** que trabajan en obras de **YPF Midstream** en Vaca Muerta.
 
 - **Empresa:** GRUPO TERGO LAF (GTL)
-- **Cliente:** YPF Upstream Neuquén
+- **Cliente:** YPF Midstream Neuquén
 - **Stack:** PWA HTML/CSS/JS vanilla + Google Apps Script + Google Sheets
 - **Offline-first:** IndexedDB para cola de envíos + Background Sync API
 - **Multi-obra:** soporta múltiples proyectos en simultáneo (Loop FO, PC1, Casquete, etc.)
@@ -293,6 +293,6 @@ Sistema desarrollado para **GTL — GRUPO TERGO LAF**.
 
 - **Director:** Luis Francica
 - **Inspector E&I:** Cristian Rodriguez (UTN Tucumán)
-- **Cliente:** YPF Upstream Neuquén — Cuenca Neuquina, Vaca Muerta
+- **Cliente:** YPF Midstream Neuquén — Cuenca Neuquina, Vaca Muerta
 
 Hecho con ☕ y mucho viento patagónico.
